@@ -133,7 +133,7 @@
     <Button
         style="@style/Theme.Ceritain.Button.Primary"
         app:cornerRadius="6dp"
-        android:id="@+id/btnLogin"
+        android:id="@+id/btnRegister"
         android:layout_width="0dp"
         android:layout_marginHorizontal="24dp"
         android:layout_marginTop="16dp"
@@ -152,15 +152,15 @@
         android:textSize="14sp"
         android:layout_marginVertical="12dp"
         android:fontFamily="@font/plus_jakarta_sans_medium"
-        app:layout_constraintBottom_toTopOf="@+id/btnRegister"
-        app:layout_constraintStart_toStartOf="@id/btnRegister"
-        app:layout_constraintEnd_toEndOf="@id/btnRegister"
+        app:layout_constraintBottom_toTopOf="@+id/btnLogin"
+        app:layout_constraintStart_toStartOf="@id/btnLogin"
+        app:layout_constraintEnd_toEndOf="@id/btnLogin"
         />
 
 
 
     <Button
-        android:id="@+id/btnRegister"
+        android:id="@+id/btnLogin"
         android:textColor="@color/black"
         android:layout_width="0dp"
         android:layout_height="48dp"

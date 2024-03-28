@@ -7,11 +7,6 @@ import android.view.WindowInsets
 import android.view.WindowManager
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
-import com.fshou.ceritain.R
 import com.fshou.ceritain.databinding.ActivityOnBoardingBinding
 import com.fshou.ceritain.ui.login.LoginActivity
 import com.fshou.ceritain.ui.register.RegisterActivity

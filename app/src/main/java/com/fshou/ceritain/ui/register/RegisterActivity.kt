@@ -4,10 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.fshou.ceritain.R
-import com.fshou.ceritain.databinding.ActivityLoginBinding
 import com.fshou.ceritain.databinding.ActivityRegisterBinding
 import com.fshou.ceritain.ui.login.LoginActivity
 
