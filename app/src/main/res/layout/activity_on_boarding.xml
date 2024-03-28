@@ -71,10 +71,10 @@
 
     <Button
         android:id="@+id/btnRegister"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:layout_width="0dp"
         android:layout_height="48dp"
-        android:backgroundTint="@color/emerald"
+        android:backgroundTint="@color/grey"
         app:cornerRadius="6dp"
         android:textSize="14sp"
         android:fontFamily="@font/plus_jakarta_sans_medium"

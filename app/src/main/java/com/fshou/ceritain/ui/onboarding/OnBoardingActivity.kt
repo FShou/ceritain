@@ -1,5 +1,6 @@
 package com.fshou.ceritain.ui.onboarding
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.WindowInsets
@@ -11,16 +12,31 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.fshou.ceritain.R
+import com.fshou.ceritain.databinding.ActivityOnBoardingBinding
+import com.fshou.ceritain.ui.login.LoginActivity
+import com.fshou.ceritain.ui.register.RegisterActivity
 
 class OnBoardingActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityOnBoardingBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        binding = ActivityOnBoardingBinding.inflate(layoutInflater)
         enableEdgeToEdge()
         setupView()
+        setContentView(binding.root)
 
-        setContentView(R.layout.activity_on_boarding)
+        binding.btnLogin.setOnClickListener {
+            startActivity(Intent(this,LoginActivity::class.java))
+            finish()
+        }
 
-
+        binding.btnRegister.setOnClickListener {
+            startActivity(Intent(this,RegisterActivity::class.java))
+            finish()
+        }
     }
 
     private fun setupView() {
