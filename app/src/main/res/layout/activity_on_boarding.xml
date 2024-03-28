@@ -21,7 +21,7 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="60dp"
         android:background="@drawable/image_overlay"
         app:layout_constraintBottom_toBottomOf="@id/imageView"
         app:layout_constraintEnd_toEndOf="@id/imageView"
@@ -71,6 +71,7 @@
 
     <Button
         android:id="@+id/btnRegister"
+        android:textColor="@color/white"
         android:layout_width="0dp"
         android:layout_height="48dp"
         android:backgroundTint="@color/emerald"
