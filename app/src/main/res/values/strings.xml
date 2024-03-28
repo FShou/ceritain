@@ -5,4 +5,11 @@
     <string name="login">Login</string>
     <string name="register">Register</string>
     <string name="continue_without_an_account"><u>Continue Without an Account</u></string>
+    <string name="log_in_to_your_account">Log In To Your Account</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="don_t_have_an_account">Don\'t have an account ?</string>
+    <string name="create_an_account">Create an Account</string>
+    <string name="repeat_password">Repeat Password</string>
+    <string name="already_have_an_account">Already have an account ?</string>
 </resources>

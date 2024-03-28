@@ -25,7 +25,7 @@ class OnBoardingActivity : AppCompatActivity() {
 
         binding = ActivityOnBoardingBinding.inflate(layoutInflater)
         enableEdgeToEdge()
-        setupView()
+//        setupView()
         setContentView(binding.root)
 
         binding.btnLogin.setOnClickListener {

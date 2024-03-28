@@ -15,7 +15,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/img"
+        app:srcCompat="@drawable/onboarding_img"
         android:scaleType="centerCrop"
      />
 
@@ -58,12 +58,9 @@
         style="@style/Theme.Ceritain.Button.Primary"
         app:cornerRadius="6dp"
         android:id="@+id/btnLogin"
-        android:textSize="14sp"
         android:layout_width="0dp"
-        android:layout_height="48dp"
         android:layout_marginHorizontal="24dp"
         android:layout_marginTop="32dp"
-        android:fontFamily="@font/plus_jakarta_sans_medium"
         android:text="@string/login"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
