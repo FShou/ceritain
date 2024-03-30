@@ -3,5 +3,9 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="emerald">#005156</color>
+    <color name="emerald_300">#3C8287</color>
+    <color name="emerald_200">#ACD3D6</color>
     <color name="grey">#F3F3F3</color>
+    <color name="transparent">#00000000</color>
+    <color name="grey_hint">#94A3B8</color>
 </resources>

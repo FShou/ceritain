@@ -13,5 +13,10 @@
         <item name="android:textSize">14sp</item>
     </style>
 
+    <style name="EditTextStyle">
+        <item name="colorControlActivated">@color/emerald_200</item>
+        <item name="android:autofilledHighlight">@drawable/bg_autofilled_hilight</item>
+    </style>
+
     <style name="Theme.Ceritain" parent="Base.Theme.Ceritain" />
 </resources>

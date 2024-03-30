@@ -69,10 +69,10 @@
         />
 
 
-    <EditText
+    <com.fshou.ceritain.ui.EditText
         android:id="@+id/inputEmail"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         app:layout_constraintTop_toBottomOf="@id/tvEmail"
         android:hint="@string/email"
         android:layout_marginHorizontal="24dp"
@@ -94,40 +94,39 @@
         />
 
 
-    <EditText
+    <com.fshou.ceritain.ui.EditText
         android:id="@+id/inputPassword"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         app:layout_constraintTop_toBottomOf="@id/tvPassword"
-        android:hint="@string/email"
+        android:hint="@string/password"
         android:layout_marginHorizontal="24dp"
-        android:autofillHints="emailAddress"
+        android:autofillHints="password"
         android:inputType="textPassword" />
 
-    <Button
-        style="@style/Theme.Ceritain.Button.Primary"
-        app:cornerRadius="6dp"
+    <view class="com.fshou.ceritain.ui.Button$Primary"
         android:id="@+id/btnLogin"
         android:layout_width="0dp"
+        android:layout_height="48dp"
         android:layout_marginHorizontal="24dp"
         android:layout_marginTop="16dp"
+        android:enabled="false"
         android:text="@string/login"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/inputPassword" />
 
-    <Button
+    <view class="com.fshou.ceritain.ui.Button$Ghost"
         android:id="@+id/btnContinue"
         android:layout_width="0dp"
         android:layout_height="48dp"
         android:layout_marginHorizontal="24dp"
-        android:backgroundTint="@color/white"
-        android:fontFamily="@font/plus_jakarta_sans_medium"
         android:text="@string/continue_without_an_account"
-        android:textColor="@color/emerald"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnLogin" />
+
+
 
     <TextView
         android:layout_width="wrap_content"
@@ -144,15 +143,10 @@
 
 
 
-    <Button
+    <view class="com.fshou.ceritain.ui.Button$Secondary"
         android:id="@+id/btnRegister"
-        android:textColor="@color/black"
         android:layout_width="0dp"
         android:layout_height="48dp"
-        android:backgroundTint="@color/grey"
-        app:cornerRadius="6dp"
-        android:textSize="14sp"
-        android:fontFamily="@font/plus_jakarta_sans_medium"
         android:layout_marginHorizontal="24dp"
         android:text="@string/register"
         android:layout_marginVertical="24dp"
