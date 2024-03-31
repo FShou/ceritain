@@ -42,7 +42,7 @@ class LoginActivity : AppCompatActivity() {
     }
     private fun setLoginButtonEnabled() {
         val result = with(binding.inputEmail) {
-            text.isValidEmail()
+            text?.isValidEmail() ?: false
         } && with(binding.inputPassword) {
             ! text.isNullOrEmpty()
         }

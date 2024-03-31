@@ -59,6 +59,15 @@ class EditText : AppCompatEditText, View.OnTouchListener {
         setHintTextColor(hintText)
         typeface = type
         setTextColor(textColor)
+        when (inputType) {
+            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD,
+            InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+            -> {
+                showClearButton()
+            }
+
+            else -> {}
+        }
     }
 
     private fun init() {
@@ -71,38 +80,48 @@ class EditText : AppCompatEditText, View.OnTouchListener {
 //        if (inputType == InputType.TYPE_TEXT_VARIATION_PASSWORD)
 //            clearIcon = ContextCompat.getDrawable(context, R.drawable.logo) as Drawable
         type = resources.getFont(R.font.plus_jakarta_sans_medium)
-        actionButtonIcon = if (inputType - 1 == InputType.TYPE_TEXT_VARIATION_PASSWORD) {
-            ContextCompat.getDrawable(context, R.drawable.eye) as Drawable
-
-        } else {
-            ContextCompat.getDrawable(context, R.drawable.close) as Drawable
-        }
+        setActionIcon()
 
         setOnTouchListener(this)
         addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
-                // Do nothing.
+
             }
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                if (s.toString().isNotEmpty()) showClearButton() else hideClearButton()
+                println()
+                when (inputType) {
+                    InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS or InputType.TYPE_CLASS_TEXT -> {
+                        error =
+                            if (!s.isValidEmail()) "Invalid Email Address" else null
+                        if (s.toString().isNotEmpty()) showClearButton() else hideClearButton()
+
+                    }
+
+                    InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD,
+                    InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD -> {
+                        if (!s.isValidPassword()) {
+                            error = "Password must have 8 chars minimum"
+                        }
+                        if (s.isEmpty()) error = null
+                    }
+                }
+
             }
 
             override fun afterTextChanged(s: Editable) {
-                when {
-                    inputType - 1 == InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS -> {
-                        error =
-                            if (!s.isValidEmail()) "Invalid Email Address" else null
-                    }
-                }
+
 
             }
         })
 
     }
 
-    fun CharSequence?.isValidEmail() =
-        !isNullOrEmpty() && Patterns.EMAIL_ADDRESS.matcher(this).matches()
+    fun CharSequence.isValidEmail() =
+        toString().isNotEmpty() && Patterns.EMAIL_ADDRESS.matcher(this).matches()
+
+    fun CharSequence.isValidPassword() =
+        toString().isNotEmpty() && this.length > 7
 
 
     private fun showClearButton() {
@@ -129,62 +148,91 @@ class EditText : AppCompatEditText, View.OnTouchListener {
 
     override fun onTouch(v: View?, event: MotionEvent): Boolean {
         if (compoundDrawables[2] != null) {
-            val actionButtonStart: Float
-            val actionButtonEnd: Float
-            var isActionButtonClicked = false
+            val clearButtonStart: Float
+            val clearButtonEnd: Float
+            var isClearButtonClicked = false
             if (layoutDirection == View.LAYOUT_DIRECTION_RTL) {
-                actionButtonEnd = (actionButtonIcon.intrinsicWidth + paddingStart).toFloat()
+                clearButtonEnd = (actionButtonIcon.intrinsicWidth + paddingStart).toFloat()
                 when {
-                    event.x < actionButtonEnd -> isActionButtonClicked = true
+                    event.x < clearButtonEnd -> isClearButtonClicked = true
                 }
             } else {
-                actionButtonStart = (width - paddingEnd - actionButtonIcon.intrinsicWidth).toFloat()
+                clearButtonStart = (width - paddingEnd - actionButtonIcon.intrinsicWidth).toFloat()
                 when {
-                    event.x > actionButtonStart -> isActionButtonClicked = true
+                    event.x > clearButtonStart -> isClearButtonClicked = true
                 }
             }
-            if (isActionButtonClicked) {
-                return when (event.action) {
+            if (isClearButtonClicked) {
+                when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
+                        setActionIcon()
                         showClearButton()
-                        true
+                        return true
                     }
 
                     MotionEvent.ACTION_UP -> {
-                        when {
-                            inputType - 1 == InputType.TYPE_TEXT_VARIATION_PASSWORD -> {
-                                inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
-                                actionButtonIcon = ContextCompat.getDrawable(
-                                    context,
-                                    R.drawable.eye_off
-                                ) as Drawable
-                                showClearButton()
-                                true
-                            }
-
-                            inputType == InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD -> {
-                                inputType = InputType.TYPE_TEXT_VARIATION_PASSWORD + 1
-                                actionButtonIcon =
-                                    ContextCompat.getDrawable(context, R.drawable.eye) as Drawable
-                                showClearButton()
-                                true
-                            }
-
-                            else -> {
-                                when {
-                                    text != null -> text?.clear()
-                                }
+                        when (inputType) {
+                            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS -> {
+                               setActionIcon()
+                                text?.clear()
                                 hideClearButton()
-                                true
                             }
-                        }
 
+                            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD -> {
+                                hideClearButton()
+                                inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                                println("PASSWORD: $inputType")
+                                println("PASSWORD: $actionButtonIcon")
+                                setActionIcon()
+                                println("PASSWORD After: $actionButtonIcon")
+                                showClearButton()
+                            }
+
+                            InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD -> {
+                                hideClearButton()
+                                inputType =
+                                    InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                                println("VISIBLE: $inputType")
+                                println("VISIBLE: $actionButtonIcon")
+                                setActionIcon()
+                                println("VISIBLE After: $actionButtonIcon")
+                                showClearButton()
+                            }
+
+                            else -> {}
+                        }
+                        return true
                     }
 
-                    else -> false
+                    else -> return false
                 }
             } else return false
         }
         return false
     }
+
+    private fun setActionIcon() {
+        actionButtonIcon = when (inputType) {
+            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS -> ContextCompat.getDrawable(
+                context,
+                R.drawable.close
+            ) as Drawable
+
+            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD -> ContextCompat.getDrawable(
+                context,
+                R.drawable.eye
+            ) as Drawable
+
+            InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD -> ContextCompat.getDrawable(
+                context,
+                R.drawable.eye_off
+            ) as Drawable
+
+            else -> ContextCompat.getDrawable(
+                context,
+                R.drawable.close
+            ) as Drawable
+        }
+    }
+
 }

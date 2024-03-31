@@ -126,6 +126,22 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnLogin" />
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/btnContinue"
+        android:layout_marginHorizontal="24dp"
+        app:errorEnabled="true"
+        >
+
+        <com.fshou.ceritain.ui.EditText
+            android:id="@+id/test"
+            android:layout_width="match_parent"
+            android:inputType="textPassword"
+            android:layout_height="48dp" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
 
 
     <TextView
