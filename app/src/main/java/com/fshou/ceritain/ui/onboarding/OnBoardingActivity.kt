@@ -7,6 +7,9 @@ import android.view.WindowInsets
 import android.view.WindowManager
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import com.fshou.ceritain.R
 import com.fshou.ceritain.databinding.ActivityOnBoardingBinding
 import com.fshou.ceritain.ui.login.LoginActivity
 import com.fshou.ceritain.ui.register.RegisterActivity
@@ -20,8 +23,13 @@ class OnBoardingActivity : AppCompatActivity() {
 
         binding = ActivityOnBoardingBinding.inflate(layoutInflater)
         enableEdgeToEdge()
-//        setupView()
         setContentView(binding.root)
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
+        setupView()
 
         binding.btnLogin.setOnClickListener {
             startActivity(Intent(this,LoginActivity::class.java))

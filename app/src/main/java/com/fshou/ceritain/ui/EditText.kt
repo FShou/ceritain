@@ -33,17 +33,14 @@ class EditText : AppCompatEditText, View.OnTouchListener {
 
     constructor(context: Context, attributes: AttributeSet) : super(
         ContextThemeWrapper(
-            context,
-            R.style.EditTextStyle
+            context, R.style.EditTextStyle
         ), attributes
     ) {
         init()
     }
 
     constructor(context: Context, attributes: AttributeSet, defStyleAttr: Int) : super(
-        ContextThemeWrapper(context, R.style.EditTextStyle),
-        attributes,
-        defStyleAttr
+        ContextThemeWrapper(context, R.style.EditTextStyle), attributes, defStyleAttr
     ) {
         init()
     }
@@ -60,13 +57,27 @@ class EditText : AppCompatEditText, View.OnTouchListener {
         typeface = type
         setTextColor(textColor)
         when (inputType) {
-            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD,
-            InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
-            -> {
+            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD, InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD -> {
                 showClearButton()
             }
-
             else -> {}
+        }
+        when{
+            !isFocused && error.isNullOrEmpty() -> {
+                bgEditText =
+                    ContextCompat.getDrawable(context, R.drawable.bg_edit_text) as Drawable
+                background = bgEditText
+            }
+            isFocused && error.isNullOrEmpty()  ->{
+                bgEditText =
+                    ContextCompat.getDrawable(context, R.drawable.bg_editext_focused) as Drawable
+                background = bgEditText
+            }
+             !error.isNullOrEmpty() -> {
+                bgEditText =
+                    ContextCompat.getDrawable(context, R.drawable.bg_edittext_error) as Drawable
+                background = bgEditText
+            }
         }
     }
 
@@ -75,10 +86,6 @@ class EditText : AppCompatEditText, View.OnTouchListener {
         highlight = ContextCompat.getColor(context, R.color.emerald_200)
         hintText = ContextCompat.getColor(context, R.color.grey_hint)
         bgEditText = ContextCompat.getDrawable(context, R.drawable.bg_edit_text) as Drawable
-
-//        clearIcon = ContextCompat.getDrawable(context,R.drawable.close) as Drawable
-//        if (inputType == InputType.TYPE_TEXT_VARIATION_PASSWORD)
-//            clearIcon = ContextCompat.getDrawable(context, R.drawable.logo) as Drawable
         type = resources.getFont(R.font.plus_jakarta_sans_medium)
         setActionIcon()
 
@@ -89,21 +96,32 @@ class EditText : AppCompatEditText, View.OnTouchListener {
             }
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                println()
                 when (inputType) {
                     InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS or InputType.TYPE_CLASS_TEXT -> {
-                        error =
-                            if (!s.isValidEmail()) "Invalid Email Address" else null
+                        if (!s.isValidEmail()) {
+                            setError("Invalid Email Address", null)
+                        } else {
+                            setError(null, null)
+                        }
                         if (s.toString().isNotEmpty()) showClearButton() else hideClearButton()
-
                     }
 
-                    InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD,
-                    InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD -> {
+                    InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD, InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD -> {
                         if (!s.isValidPassword()) {
-                            error = "Password must have 8 chars minimum"
+                            setError("Password must have minimum of 8 Characters", null)
+                        } else {
+                            setError(null, null)
                         }
-                        if (s.isEmpty()) error = null
+                    }
+
+                    else -> {
+                        if (s.isEmpty()) {
+                            setError("This Cannot be empty", null)
+                            hideClearButton()
+                        } else {
+                            setError(null, null)
+                            showClearButton()
+                        }
                     }
                 }
 
@@ -114,14 +132,12 @@ class EditText : AppCompatEditText, View.OnTouchListener {
 
             }
         })
-
     }
 
     fun CharSequence.isValidEmail() =
         toString().isNotEmpty() && Patterns.EMAIL_ADDRESS.matcher(this).matches()
 
-    fun CharSequence.isValidPassword() =
-        toString().isNotEmpty() && this.length > 7
+    fun CharSequence.isValidPassword() = toString().isNotEmpty() && this.length > 7
 
 
     private fun showClearButton() {
@@ -139,10 +155,7 @@ class EditText : AppCompatEditText, View.OnTouchListener {
         bottomOfTheText: Drawable? = null
     ) {
         setCompoundDrawablesWithIntrinsicBounds(
-            startOfTheText,
-            topOfTheText,
-            endOfTheText,
-            bottomOfTheText
+            startOfTheText, topOfTheText, endOfTheText, bottomOfTheText
         )
     }
 
@@ -172,19 +185,10 @@ class EditText : AppCompatEditText, View.OnTouchListener {
 
                     MotionEvent.ACTION_UP -> {
                         when (inputType) {
-                            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS -> {
-                               setActionIcon()
-                                text?.clear()
-                                hideClearButton()
-                            }
-
                             InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD -> {
                                 hideClearButton()
                                 inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
-                                println("PASSWORD: $inputType")
-                                println("PASSWORD: $actionButtonIcon")
                                 setActionIcon()
-                                println("PASSWORD After: $actionButtonIcon")
                                 showClearButton()
                             }
 
@@ -192,14 +196,15 @@ class EditText : AppCompatEditText, View.OnTouchListener {
                                 hideClearButton()
                                 inputType =
                                     InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-                                println("VISIBLE: $inputType")
-                                println("VISIBLE: $actionButtonIcon")
                                 setActionIcon()
-                                println("VISIBLE After: $actionButtonIcon")
                                 showClearButton()
                             }
 
-                            else -> {}
+                            else -> {
+                                setActionIcon()
+                                text?.clear()
+                                hideClearButton()
+                            }
                         }
                         return true
                     }
@@ -214,23 +219,19 @@ class EditText : AppCompatEditText, View.OnTouchListener {
     private fun setActionIcon() {
         actionButtonIcon = when (inputType) {
             InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS -> ContextCompat.getDrawable(
-                context,
-                R.drawable.close
+                context, R.drawable.close
             ) as Drawable
 
             InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD -> ContextCompat.getDrawable(
-                context,
-                R.drawable.eye
+                context, R.drawable.eye
             ) as Drawable
 
             InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD -> ContextCompat.getDrawable(
-                context,
-                R.drawable.eye_off
+                context, R.drawable.eye_off
             ) as Drawable
 
             else -> ContextCompat.getDrawable(
-                context,
-                R.drawable.close
+                context, R.drawable.close
             ) as Drawable
         }
     }

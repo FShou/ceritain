@@ -36,7 +36,7 @@
         android:text="@string/app_name"
         android:textColor="@color/emerald"
         android:fontFamily="@font/satisfy"
-        android:layout_marginTop="-70dp"
+        android:layout_marginTop="-150dp"
         android:layout_marginHorizontal="24dp"
         android:textSize="24sp"
         app:layout_constraintTop_toBottomOf="@+id/circleTwo"
@@ -56,10 +56,10 @@
 
     <TextView
         android:layout_marginTop="48dp"
-        android:id="@+id/tvEmail"
+        android:id="@+id/tvName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/email"
+        android:text="Name"
         android:textSize="14sp"
         android:fontFamily="@font/plus_jakarta_sans_medium"
         app:layout_constraintTop_toBottomOf="@id/title"
@@ -69,12 +69,39 @@
         />
 
 
-    <EditText
+    <com.fshou.ceritain.ui.EditText
+        android:id="@+id/inputName"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        app:layout_constraintTop_toBottomOf="@id/tvName"
+        android:hint="Your Name"
+        android:layout_marginHorizontal="24dp"
+        android:maxLines="1"
+        android:inputType="text"
+         />
+
+    <TextView
+
+        android:layout_marginTop="8dp"
+        android:id="@+id/tvEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/email"
+        android:textSize="14sp"
+        android:fontFamily="@font/plus_jakarta_sans_medium"
+        app:layout_constraintTop_toBottomOf="@id/inputName"
+        app:layout_constraintStart_toStartOf="parent"
+        android:textColor="@color/emerald"
+        android:layout_marginHorizontal="24dp"
+        />
+
+
+    <com.fshou.ceritain.ui.EditText
         android:id="@+id/inputEmail"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         app:layout_constraintTop_toBottomOf="@id/tvEmail"
-        android:hint="@string/email"
+        android:hint="Your Email Addres"
         android:layout_marginHorizontal="24dp"
         android:autofillHints="emailAddress"
         android:inputType="textEmailAddress" />
@@ -94,12 +121,12 @@
         />
 
 
-    <EditText
+    <com.fshou.ceritain.ui.EditText
         android:id="@+id/inputPassword"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         app:layout_constraintTop_toBottomOf="@id/tvPassword"
-        android:hint="@string/email"
+        android:hint="Your Password"
         android:layout_marginHorizontal="24dp"
         android:autofillHints="emailAddress"
         android:inputType="textPassword" />
@@ -120,24 +147,24 @@
         />
 
 
-    <EditText
+    <com.fshou.ceritain.ui.EditText
         android:id="@+id/inputRepeatPassword"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         app:layout_constraintTop_toBottomOf="@id/tvRepeatPassword"
-        android:hint="@string/email"
+        android:hint="@string/repeat_password"
         android:layout_marginHorizontal="24dp"
         android:inputType="textPassword"
         android:autofillHints="password" />
 
-    <Button
-        style="@style/Theme.Ceritain.Button.Primary"
-        app:cornerRadius="6dp"
+    <view class="com.fshou.ceritain.ui.Button$Primary"
         android:id="@+id/btnRegister"
         android:layout_width="0dp"
+        android:layout_height="48dp"
         android:layout_marginHorizontal="24dp"
         android:layout_marginTop="16dp"
         android:text="@string/register"
+        android:enabled="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/inputRepeatPassword" />
@@ -159,15 +186,10 @@
 
 
 
-    <Button
+    <view class="com.fshou.ceritain.ui.Button$Secondary"
         android:id="@+id/btnLogin"
-        android:textColor="@color/black"
         android:layout_width="0dp"
         android:layout_height="48dp"
-        android:backgroundTint="@color/grey"
-        app:cornerRadius="6dp"
-        android:textSize="14sp"
-        android:fontFamily="@font/plus_jakarta_sans_medium"
         android:layout_marginHorizontal="24dp"
         android:text="@string/login"
         android:layout_marginVertical="24dp"
