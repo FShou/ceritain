@@ -7,18 +7,27 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.WindowInsets
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.fshou.ceritain.R
 import com.fshou.ceritain.databinding.ActivityRegisterBinding
+import com.fshou.ceritain.ui.factory.ViewModelFactory
 import com.fshou.ceritain.ui.login.LoginActivity
+import com.fshou.ceritain.data.Result
+import com.fshou.ceritain.data.remote.response.Response
+import com.fshou.ceritain.ui.home.HomeActivity
 
 class RegisterActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityRegisterBinding
+    private val viewModel: RegisterViewModel by viewModels {
+        ViewModelFactory.getInstance(this)
+    }
     private val validationWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -54,7 +63,17 @@ class RegisterActivity : AppCompatActivity() {
         binding.inputEmail.addTextChangedListener(validationWatcher)
         binding.inputPassword.addTextChangedListener(passwordWatcher)
         binding.inputRepeatPassword.addTextChangedListener(passwordWatcher)
+        binding.btnRegister.setOnClickListener {
+            val name = binding.inputName.text.toString()
+            val email = binding.inputEmail.text.toString()
+            println(email)
+            val password = binding.inputPassword.text.toString()
 
+            viewModel.register(name,email,password).observe(this) {
+                handleResult(it)
+            }
+
+        }
         binding.btnLogin.setOnClickListener {
             startActivity(Intent(this,LoginActivity::class.java))
             finish()
@@ -62,6 +81,21 @@ class RegisterActivity : AppCompatActivity() {
 
     }
 
+    private fun handleResult(result: Result<Response>){
+        when(result){
+            is Result.Loading -> {
+
+            }
+            is Result.Error -> {
+                showToast(result.error)
+            }
+            is Result.Success -> {
+                showToast("Register Success")
+            }
+        }
+    }
+
+    private fun showToast(msg: String) = Toast.makeText(this, msg,Toast.LENGTH_SHORT).show()
 
 
     private fun isRepeatPasswordSame() =
