@@ -13,4 +13,6 @@
     <string name="repeat_password">Repeat Password</string>
     <string name="already_have_an_account">Already have an account ?</string>
     <string name="onboarding_image">OnBoarding Image</string>
+    <string name="profile_picture">Profile picture</string>
+    <string name="username">Username</string>
 </resources>

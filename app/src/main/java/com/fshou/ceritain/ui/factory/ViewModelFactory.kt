@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.fshou.ceritain.data.AppRepository
 import com.fshou.ceritain.data.di.Injection
+import com.fshou.ceritain.ui.home.HomeViewModel
 import com.fshou.ceritain.ui.login.LoginViewModel
+import com.fshou.ceritain.ui.onboarding.OnBoardingViewModel
 import com.fshou.ceritain.ui.register.RegisterViewModel
 
 class ViewModelFactory private constructor(
@@ -19,6 +21,12 @@ class ViewModelFactory private constructor(
                 appRepository
             ) as T
             modelClass.isAssignableFrom(RegisterViewModel::class.java) -> return RegisterViewModel(
+                appRepository
+            ) as T
+            modelClass.isAssignableFrom(HomeViewModel::class.java) -> return HomeViewModel(
+                appRepository
+            ) as T
+            modelClass.isAssignableFrom(OnBoardingViewModel::class.java) -> return OnBoardingViewModel(
                 appRepository
             ) as T
         }

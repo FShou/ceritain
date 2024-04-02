@@ -6,7 +6,6 @@ import com.fshou.ceritain.data.remote.response.Response
 import com.fshou.ceritain.data.remote.response.StoriesResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import retrofit2.http.Body
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
@@ -50,6 +49,10 @@ interface ApiService {
     @GET("stories")
     suspend fun getStories(
         @Header("Authorization") bearerToken: String
+    ): StoriesResponse
+
+    @GET("stories")
+    suspend fun getStories(
     ): StoriesResponse
 
     @GET("stories/{id}")

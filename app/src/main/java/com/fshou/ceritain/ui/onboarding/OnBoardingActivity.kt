@@ -6,17 +6,23 @@ import android.os.Bundle
 import android.view.WindowInsets
 import android.view.WindowManager
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.fshou.ceritain.R
 import com.fshou.ceritain.databinding.ActivityOnBoardingBinding
+import com.fshou.ceritain.ui.factory.ViewModelFactory
+import com.fshou.ceritain.ui.home.HomeActivity
 import com.fshou.ceritain.ui.login.LoginActivity
 import com.fshou.ceritain.ui.register.RegisterActivity
 
 class OnBoardingActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityOnBoardingBinding
+    private val viewModel: OnBoardingViewModel by viewModels {
+        ViewModelFactory.getInstance(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +45,12 @@ class OnBoardingActivity : AppCompatActivity() {
         binding.btnRegister.setOnClickListener {
             startActivity(Intent(this,RegisterActivity::class.java))
             finish()
+        }
+
+        viewModel.pref.observe(this) {
+            it?.let {
+                startActivity(Intent(this,HomeActivity::class.java))
+            }
         }
     }
 
