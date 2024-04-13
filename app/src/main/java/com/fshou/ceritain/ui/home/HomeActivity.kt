@@ -38,6 +38,10 @@ class HomeActivity : AppCompatActivity(), StoryAdapter.StoryListener {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        // Todo: overflow refresh
+
+
         viewModel.pref.observe(this) {token ->
             if (token != null) {
                 viewModel.getStories(token).observe(this) { result ->
@@ -92,11 +96,10 @@ class HomeActivity : AppCompatActivity(), StoryAdapter.StoryListener {
     }
 
     override fun onShareClicked(story: Story) {
-//        TODO("Not yet implemented")
+//        TODO: Share story
     }
 
     override fun onStoryClicked(story: Story) {
-//        TODO("Not yet implemented")
        startActivity(
            Intent(this@HomeActivity,DetailActivity::class.java).apply {
                putExtra(DetailActivity.EXTRA_STORY, story)

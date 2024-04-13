@@ -76,7 +76,7 @@ class LoginActivity : AppCompatActivity() {
     private fun handleResult(result: Result<LoginResult>) {
         when(result){
             is Result.Loading -> {
-
+                // Todo: Progress bar & disable input & button
             }
             is Result.Error -> {
                showToast(result.error)

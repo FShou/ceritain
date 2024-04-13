@@ -21,7 +21,6 @@ class AppRepository private constructor(
 
      fun register(name: String, email: String, password: String): LiveData<Result<Response>> = liveData {
        emit(Result.Loading)
-         println(name + email + password)
         try {
             val response = apiService.register(name,email,password)
             emit(Result.Success(response))
@@ -50,21 +49,6 @@ class AppRepository private constructor(
         }
     }
 
-    fun getStories(): LiveData<Result<List<Story>>> = liveData {
-        emit(Result.Loading)
-        try {
-            val response = apiService.getStories()
-            response.listStory?.let {
-                emit(Result.Success(it as List<Story>))
-            }
-        } catch (e: HttpException) {
-            val jsonBody = e.response()?.errorBody()?.string()
-            val errorBoody = Gson().fromJson(jsonBody,Response::class.java)
-            errorBoody.message?.let {
-                emit(Result.Error(it))
-            }
-        }
-    }
     fun getStories( token: String): LiveData<Result<List<Story>>> = liveData {
         emit(Result.Loading)
         try {

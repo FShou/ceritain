@@ -32,28 +32,22 @@ interface ApiService {
         @Field("password") password: String
     ): LoginResponse
 
-    @POST("stories")
-    suspend fun postStory(
-        // Todo: Post Story
-    )
 
     @Multipart
-    @POST("stories/guest")
-    suspend fun postStoryAsGuest(
+    @POST("stories")
+    suspend fun postStory(
         @Part file: MultipartBody.Part,
         @Part("description") description: RequestBody,
 
-        // Todo:
-    )
+        // Todo: Post Story
+    ):  Response
 
     @GET("stories")
     suspend fun getStories(
         @Header("Authorization") bearerToken: String
     ): StoriesResponse
 
-    @GET("stories")
-    suspend fun getStories(
-    ): StoriesResponse
+
 
     @GET("stories/{id}")
     suspend fun getDetailStory(

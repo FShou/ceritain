@@ -84,7 +84,7 @@ class RegisterActivity : AppCompatActivity() {
     private fun handleResult(result: Result<Response>){
         when(result){
             is Result.Loading -> {
-
+                // Todo: Progress bar , disable input & Button
             }
             is Result.Error -> {
                 showToast(result.error)
