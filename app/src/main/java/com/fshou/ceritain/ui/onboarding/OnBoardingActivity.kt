@@ -30,11 +30,11 @@ class OnBoardingActivity : AppCompatActivity() {
         binding = ActivityOnBoardingBinding.inflate(layoutInflater)
         enableEdgeToEdge()
         setContentView(binding.root)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
+//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+//            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+//            v.setPadding(systemBars.left, 0, systemBars.right, systemBars.bottom)
+//            insets
+//        }
         setupView()
 
         binding.btnLogin.setOnClickListener {
@@ -50,6 +50,7 @@ class OnBoardingActivity : AppCompatActivity() {
         viewModel.pref.observe(this) {
             it?.let {
                 startActivity(Intent(this,HomeActivity::class.java))
+                finish()
             }
         }
     }

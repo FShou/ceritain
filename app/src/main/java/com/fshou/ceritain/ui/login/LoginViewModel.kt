@@ -9,10 +9,9 @@ class LoginViewModel(
     val appRepository: AppRepository
 ) : ViewModel() {
 
-    fun login(email: String,password:String) = appRepository.login(email, password)
-    fun saveLoginUser(name:String , userId: String, token: String)= viewModelScope.launch {
+    fun login(email: String, password: String) = appRepository.login(email, password)
+    fun saveLoginUser(token: String) = viewModelScope.launch {
         val formattedToken = "Bearer $token"
-        val user = setOf( name, userId, formattedToken)
-        appRepository.saveLoginUser(user)
+        appRepository.saveLoginUser(formattedToken)
     }
 }

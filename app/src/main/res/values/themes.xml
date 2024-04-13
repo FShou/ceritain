@@ -18,5 +18,21 @@
         <item name="android:autofilledHighlight">@drawable/bg_autofilled_hilight</item>
     </style>
 
+    <style name="TextAppearance.Shrine.Headline6" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="fontFamily">@font/satisfy</item>
+        <item name="android:fontFamily">@font/satisfy</item>
+        <item name="android:textSize">32sp</item>
+    </style>
+    
+    <style name="Widget.App.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
+        <item name="titleTextAppearance">@style/TextAppearance.Shrine.Headline6</item>
+    </style>
+
+    <style name="Widget.App.Button.Icon" parent="Widget.Material3.Button.IconButton">
+            <item name="iconTint">@color/white</item>
+        <item name="backgroundTint">@color/emerald</item>
+    </style>
+    
+
     <style name="Theme.Ceritain" parent="Base.Theme.Ceritain" />
 </resources>

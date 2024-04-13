@@ -1,6 +1,8 @@
 package com.fshou.ceritain.data.remote.response
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 
 data class DetailStoryResponse(
 
@@ -13,7 +15,7 @@ data class DetailStoryResponse(
 	@field:SerializedName("story")
 	val story: Story? = null
 )
-
+@Parcelize
 data class Story(
 
 	@field:SerializedName("photoUrl")
@@ -29,11 +31,11 @@ data class Story(
 	val description: String? = null,
 
 	@field:SerializedName("lon")
-	val lon: Any? = null,
+	val lon: Float? = null,
 
 	@field:SerializedName("id")
 	val id: String? = null,
 
 	@field:SerializedName("lat")
-	val lat: Any? = null
-)
+	val lat: Float? = null
+) : Parcelable

@@ -16,7 +16,7 @@ class AppRepository private constructor(
 ) {
 
     fun getLoginUser() = loginUserPreference.getLoginUser()
-    suspend fun saveLoginUser(user: Set<String>) = loginUserPreference.saveLoginUser(user)
+    suspend fun saveLoginUser(user: String) = loginUserPreference.saveLoginUser(user)
     suspend fun clearLoginUser() = loginUserPreference.clearLoginUser()
 
      fun register(name: String, email: String, password: String): LiveData<Result<Response>> = liveData {

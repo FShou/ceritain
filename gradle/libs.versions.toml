@@ -17,6 +17,7 @@ material = "1.11.0"
 activity = "1.8.0"
 constraintlayout = "2.1.4"
 
+
 [libraries]
 androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activityKtx" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -41,4 +42,5 @@ retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "converte
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+parcelize = {id = "kotlin-parcelize", version.ref = "kotlin"}
 

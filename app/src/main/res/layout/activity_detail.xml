@@ -3,10 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
-    android:background="@color/white"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.capture.CaptureActivity">
-
+    tools:context=".ui.detail.DetailActivity">
 
 </androidx.constraintlayout.widget.ConstraintLayout>

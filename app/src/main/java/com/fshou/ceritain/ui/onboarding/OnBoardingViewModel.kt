@@ -7,7 +7,7 @@ import com.fshou.ceritain.data.AppRepository
 
 class OnBoardingViewModel(val appRepository: AppRepository): ViewModel() {
 
-    lateinit var pref: LiveData<Set<String>?>
+    lateinit var pref: LiveData<String?>
     init {
         getLoginUser()
     }

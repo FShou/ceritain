@@ -15,4 +15,5 @@
     <string name="onboarding_image">OnBoarding Image</string>
     <string name="profile_picture">Profile picture</string>
     <string name="username">Username</string>
+    <string name="log_out">Log Out</string>
 </resources>

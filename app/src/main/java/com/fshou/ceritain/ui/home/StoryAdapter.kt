@@ -5,7 +5,9 @@ import android.view.RoundedCorner
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
+import coil.transform.CircleCropTransformation
 import coil.transform.RoundedCornersTransformation
+import com.fshou.ceritain.R
 import com.fshou.ceritain.data.remote.response.Story
 import com.fshou.ceritain.databinding.StoryItemLayoutBinding
 
@@ -17,10 +19,14 @@ class StoryAdapter(val story: List<Story>, val storyListener: StoryListener) :
 
         fun bind(story: Story) {
             binding.root.setOnClickListener {
-                storyListener.onStoryClicked()
+                storyListener.onStoryClicked(story)
             }
             binding.btnShare.setOnClickListener {
                 storyListener.onShareClicked(story)
+            }
+            binding.profilePicture.load(R.drawable.profile) {
+                crossfade(true)
+                transformations(CircleCropTransformation())
             }
 
             binding.storyPicture.load(story.photoUrl) {
@@ -48,7 +54,7 @@ class StoryAdapter(val story: List<Story>, val storyListener: StoryListener) :
 
     interface StoryListener {
         fun onShareClicked(story: Story)
-        fun onStoryClicked()
+        fun onStoryClicked(story: Story)
 
     }
 }

@@ -1,7 +1,7 @@
-
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    id("kotlin-parcelize")
 }
 
 android {
@@ -20,7 +20,7 @@ android {
 
     buildTypes {
         debug {
-            buildConfigField( "String", "BASE_URL", "\"https://story-api.dicoding.dev/v1/\"")
+            buildConfigField("String", "BASE_URL", "\"https://story-api.dicoding.dev/v1/\"")
         }
         release {
             isMinifyEnabled = false
@@ -29,7 +29,7 @@ android {
                 "proguard-rules.pro"
             )
 
-            buildConfigField( "String", "BASE_URL", "\"https://story-api.dicoding.dev/v1/\"")
+            buildConfigField("String", "BASE_URL", "\"https://story-api.dicoding.dev/v1/\"")
         }
     }
     compileOptions {
@@ -41,7 +41,7 @@ android {
     }
     buildFeatures {
         viewBinding = true
-        buildConfig= true
+        buildConfig = true
     }
 
 

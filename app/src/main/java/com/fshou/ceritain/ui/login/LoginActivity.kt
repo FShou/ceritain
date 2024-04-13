@@ -46,11 +46,11 @@ class LoginActivity : AppCompatActivity() {
         enableEdgeToEdge()
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
+//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+//            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+//            insets
+//        }
         setupView()
 
 
@@ -83,15 +83,12 @@ class LoginActivity : AppCompatActivity() {
             }
             is Result.Success -> {
                 showToast("Login Success")
-                saveUserToken(result.data)
+                val token = result.data.token
+                viewModel.saveLoginUser(token)
                 startActivity(Intent(this@LoginActivity,HomeActivity::class.java))
+                finish()
             }
         }
-    }
-
-    private fun saveUserToken(data: LoginResult) {
-        val (name,userId,token) = data
-        viewModel.saveLoginUser(name,userId,token)
     }
 
     private fun showToast(msg: String) = Toast.makeText(this@LoginActivity,msg,Toast.LENGTH_SHORT).show()
