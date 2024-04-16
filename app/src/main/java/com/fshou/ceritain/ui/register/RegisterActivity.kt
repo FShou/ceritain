@@ -11,16 +11,11 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.fshou.ceritain.R
 import com.fshou.ceritain.databinding.ActivityRegisterBinding
 import com.fshou.ceritain.ui.factory.ViewModelFactory
 import com.fshou.ceritain.ui.login.LoginActivity
 import com.fshou.ceritain.data.Result
 import com.fshou.ceritain.data.remote.response.Response
-import com.fshou.ceritain.ui.home.HomeActivity
 
 class RegisterActivity : AppCompatActivity() {
 

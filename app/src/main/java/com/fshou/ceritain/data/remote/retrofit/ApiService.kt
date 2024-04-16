@@ -38,7 +38,7 @@ interface ApiService {
     suspend fun postStory(
         @Part file: MultipartBody.Part,
         @Part("description") description: RequestBody,
-
+        @Header("Authorization") bearerToken: String
         // Todo: Post Story
     ):  Response
 

@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -46,6 +47,16 @@ class CaptureActivity : AppCompatActivity(), ImageCapture.OnImageSavedCallback {
         handlePermissionGranted(isGranted)
     }
 
+    private val launcherGallery = registerForActivityResult(
+        ActivityResultContracts.PickVisualMedia()
+    ) { uri: Uri? ->
+        if (uri != null) {
+            viewModel.setCurrentImageUri(uri)
+        } else {
+            Log.d("Photo Picker", "No media selected")
+        }
+    }
+
     private fun handlePermissionGranted(isGranted: Boolean) {
         // TODO: show error if is not Granted otherwise show cameraX
         if (isGranted) {
@@ -76,6 +87,10 @@ class CaptureActivity : AppCompatActivity(), ImageCapture.OnImageSavedCallback {
             requestCameraPermission.launch(REQUIRED_PERMISSION)
         }
 
+        binding.gallery.setOnClickListener {
+            launcherGallery.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        }
+
         if (allPermissionsGranted()) {
             startCamera()
 
@@ -93,6 +108,8 @@ class CaptureActivity : AppCompatActivity(), ImageCapture.OnImageSavedCallback {
             binding.chooseImg.setOnClickListener {
                 startActivity(Intent(this@CaptureActivity, PostActivity::class.java).apply {
                     putExtra(EXTRA_IMG_URI, viewModel.currentImageUri.value.toString())
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
                 })
                 finish()
             }

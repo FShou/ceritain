@@ -69,12 +69,14 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
     implementation(libs.logging.interceptor)
+    implementation(libs.androidx.lifecycle.runtime.ktx) //untuk lifecycleScope
 
 
     //data preference
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
+
 
     // camerax
     implementation(libs.androidx.camera.camera2)

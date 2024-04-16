@@ -2,18 +2,34 @@ package com.fshou.ceritain.ui.post
 
 import android.net.Uri
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import coil.load
 import coil.transform.RoundedCornersTransformation
+import com.fshou.ceritain.data.Result
+import com.fshou.ceritain.data.remote.response.Response
 import com.fshou.ceritain.databinding.ActivityPostBinding
 import com.fshou.ceritain.ui.capture.CaptureActivity
+import com.fshou.ceritain.ui.factory.ViewModelFactory
+import com.fshou.ceritain.uriToFile
+import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.InputStream
 
 class PostActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityPostBinding
+    private val viewModel: PostViewModel by viewModels {
+        ViewModelFactory.getInstance(this)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPostBinding.inflate(layoutInflater)
@@ -34,8 +50,44 @@ class PostActivity : AppCompatActivity() {
 
         binding.btnPost.setOnClickListener {
             // Todo: Post the story
+            postStory(imgUri)
         }
 
 
+    }
+
+    private fun postStory(uri: Uri){
+        val imgFile = uriToFile(uri,this)
+        val description = binding.inputDescription.text.toString()
+
+        val requestBody = description.toRequestBody("text/plain".toMediaType())
+        val requestImageFile = imgFile.asRequestBody("image/jpeg".toMediaType())
+        val multipartBody = MultipartBody.Part.createFormData(
+            "photo",
+            imgFile.name,
+            requestImageFile
+        )
+        lifecycleScope.launch {
+            viewModel.postStory(multipartBody,requestBody).observe(this@PostActivity) {
+                handleResult(it)
+            }
+        }
+    }
+
+    private fun handleResult(response: Result<Response>) {
+       when(response){
+           is Result.Loading -> {
+               binding.btnPost.isEnabled = false
+            }
+           is Result.Success -> {
+               binding.btnPost.isEnabled = true
+               Toast.makeText(this@PostActivity, "Post Success",Toast.LENGTH_SHORT).show()
+           }
+           is Result.Error -> {
+               binding.btnPost.isEnabled = true
+
+           }
+
+       }
     }
 }

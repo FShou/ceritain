@@ -8,6 +8,7 @@ import com.fshou.ceritain.data.di.Injection
 import com.fshou.ceritain.ui.home.HomeViewModel
 import com.fshou.ceritain.ui.login.LoginViewModel
 import com.fshou.ceritain.ui.onboarding.OnBoardingViewModel
+import com.fshou.ceritain.ui.post.PostViewModel
 import com.fshou.ceritain.ui.register.RegisterViewModel
 
 class ViewModelFactory private constructor(
@@ -29,8 +30,10 @@ class ViewModelFactory private constructor(
             modelClass.isAssignableFrom(OnBoardingViewModel::class.java) -> return OnBoardingViewModel(
                 appRepository
             ) as T
+            modelClass.isAssignableFrom(PostViewModel::class.java) -> return PostViewModel(
+                appRepository
+            ) as T
         }
-
 
         throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
     }

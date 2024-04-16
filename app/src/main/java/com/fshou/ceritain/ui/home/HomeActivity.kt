@@ -10,12 +10,12 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.fshou.ceritain.R
+import com.fshou.ceritain.data.Result
 import com.fshou.ceritain.data.remote.response.Story
 import com.fshou.ceritain.databinding.ActivityHomeBinding
-import com.fshou.ceritain.ui.factory.ViewModelFactory
-import com.fshou.ceritain.data.Result
 import com.fshou.ceritain.ui.capture.CaptureActivity
 import com.fshou.ceritain.ui.detail.DetailActivity
+import com.fshou.ceritain.ui.factory.ViewModelFactory
 import com.fshou.ceritain.ui.onboarding.OnBoardingActivity
 
 
@@ -69,6 +69,18 @@ class HomeActivity : AppCompatActivity(), StoryAdapter.StoryListener {
 
 
     }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.pref.observe(this) {token ->
+            if (token != null) {
+                viewModel.getStories(token).observe(this) { result ->
+                    handleResult(result)
+                }
+            }
+        }
+    }
+    
 
     private fun handleResult(result: Result<List<Story>>) {
         when(result){
