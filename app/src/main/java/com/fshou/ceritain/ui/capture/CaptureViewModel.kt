@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class CaptureViewMdoel: ViewModel() {
+class CaptureViewModel: ViewModel() {
     private var _currentImageUri = MutableLiveData<Uri?>()
     val currentImageUri: LiveData<Uri?> = _currentImageUri
 
@@ -13,7 +13,5 @@ class CaptureViewMdoel: ViewModel() {
     fun setCurrentImageUri (uri: Uri?) {
         _currentImageUri.value = uri
     }
-
-
 
 }

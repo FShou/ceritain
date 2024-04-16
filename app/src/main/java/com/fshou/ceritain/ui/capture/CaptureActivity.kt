@@ -33,7 +33,7 @@ class CaptureActivity : AppCompatActivity(), ImageCapture.OnImageSavedCallback {
     private lateinit var binding: ActivityCaptureBinding
     private var cameraSelector: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
     private var imageCapture: ImageCapture? = null
-    private val viewModel: CaptureViewMdoel by viewModels()
+    private val viewModel: CaptureViewModel by viewModels()
 
     private fun allPermissionsGranted() =
         ContextCompat.checkSelfPermission(
@@ -51,6 +51,8 @@ class CaptureActivity : AppCompatActivity(), ImageCapture.OnImageSavedCallback {
         ActivityResultContracts.PickVisualMedia()
     ) { uri: Uri? ->
         if (uri != null) {
+            // permission to read uri in other activity
+            contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
             viewModel.setCurrentImageUri(uri)
         } else {
             Log.d("Photo Picker", "No media selected")
@@ -108,8 +110,6 @@ class CaptureActivity : AppCompatActivity(), ImageCapture.OnImageSavedCallback {
             binding.chooseImg.setOnClickListener {
                 startActivity(Intent(this@CaptureActivity, PostActivity::class.java).apply {
                     putExtra(EXTRA_IMG_URI, viewModel.currentImageUri.value.toString())
-                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                    addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
                 })
                 finish()
             }
@@ -123,22 +123,22 @@ class CaptureActivity : AppCompatActivity(), ImageCapture.OnImageSavedCallback {
     }
 
     private fun showConfirmationAction() {
-       with(binding){
-           gallery.visibility = View.GONE
-           capture.visibility= View.GONE
-           switchCamera.visibility = View.GONE
-           clearImage.visibility = View.VISIBLE
-           chooseImg.visibility =View.VISIBLE
-       }
+        with(binding) {
+            gallery.visibility = View.GONE
+            capture.visibility = View.GONE
+            switchCamera.visibility = View.GONE
+            clearImage.visibility = View.VISIBLE
+            chooseImg.visibility = View.VISIBLE
+        }
     }
 
-    private fun showCameraAction(){
-        with(binding){
+    private fun showCameraAction() {
+        with(binding) {
             gallery.visibility = View.VISIBLE
-            capture.visibility= View.VISIBLE
+            capture.visibility = View.VISIBLE
             switchCamera.visibility = View.VISIBLE
             clearImage.visibility = View.GONE
-            chooseImg.visibility =View.GONE
+            chooseImg.visibility = View.GONE
         }
     }
 
@@ -186,7 +186,7 @@ class CaptureActivity : AppCompatActivity(), ImageCapture.OnImageSavedCallback {
 
     private fun takePhoto() {
         val imageCapture = imageCapture ?: return
-        val photoFile = createCustomTempFile(application)
+        val photoFile = createCustomTempFile(this)
         val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
         imageCapture.takePicture(
             outputOptions,
