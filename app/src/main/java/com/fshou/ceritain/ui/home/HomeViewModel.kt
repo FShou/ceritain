@@ -3,7 +3,6 @@ package com.fshou.ceritain.ui.home
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
-import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import com.fshou.ceritain.data.AppRepository
 import com.fshou.ceritain.data.Result

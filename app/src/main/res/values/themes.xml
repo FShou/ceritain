@@ -18,14 +18,24 @@
         <item name="android:autofilledHighlight">@drawable/bg_autofilled_hilight</item>
     </style>
 
-    <style name="TextAppearance.Shrine.Headline6" parent="TextAppearance.MaterialComponents.Headline6">
+    <style name="TextAppearance.AppBar.Default" parent="TextAppearance.MaterialComponents.Headline6">
         <item name="fontFamily">@font/satisfy</item>
         <item name="android:fontFamily">@font/satisfy</item>
         <item name="android:textSize">32sp</item>
     </style>
+
+    <style name="TextAppearance.AppBar.Sans.Title" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="fontFamily">@font/plus_jakarta_sans_bold</item>
+        <item name="android:fontFamily">@font/plus_jakarta_sans_bold</item>
+        <item name="android:textSize">24sp</item>
+    </style>
     
-    <style name="Widget.App.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
-        <item name="titleTextAppearance">@style/TextAppearance.Shrine.Headline6</item>
+    <style name="Widget.App.Toolbar.Default" parent="Widget.MaterialComponents.Toolbar.Primary">
+        <item name="titleTextAppearance">@style/TextAppearance.AppBar.Default</item>
+    </style>
+
+    <style name="Widget.App.Toolbar.Sans" parent="Widget.MaterialComponents.Toolbar.Primary">
+        <item name="titleTextAppearance">@style/TextAppearance.AppBar.Sans.Title</item>
     </style>
 
     <style name="Widget.App.Button.Icon" parent="Widget.Material3.Button.IconButton">

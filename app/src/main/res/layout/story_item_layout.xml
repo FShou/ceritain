@@ -9,7 +9,8 @@
     android:layout_marginTop="12dp"
     android:backgroundTint="@color/grey"
     card_view:cardCornerRadius="8dp"
-    card_view:cardElevation="0dp">
+    card_view:cardElevation="0dp"
+    >
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

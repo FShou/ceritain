@@ -16,4 +16,7 @@
     <string name="profile_picture">Profile picture</string>
     <string name="username">Username</string>
     <string name="log_out">Log Out</string>
+    <string name="capture">Capture</string>
+    <string name="preview_image">Preview Image</string>
+    <string name="post">Post</string>
 </resources>

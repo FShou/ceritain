@@ -1,7 +1,6 @@
 package com.fshou.ceritain.ui.home
 
 import android.view.LayoutInflater
-import android.view.RoundedCorner
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
