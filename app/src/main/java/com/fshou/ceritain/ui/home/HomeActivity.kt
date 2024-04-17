@@ -58,6 +58,7 @@ class HomeActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
         binding.topAppBar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.logout -> {
+                    // Todo Confirmation to Logout
                     viewModel.clearLoginUser()
                     startActivity(Intent(this, OnBoardingActivity::class.java))
                     finish()

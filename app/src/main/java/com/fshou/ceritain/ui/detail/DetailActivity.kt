@@ -10,17 +10,22 @@ import coil.load
 import coil.transform.RoundedCornersTransformation
 import com.fshou.ceritain.data.remote.response.Story
 import com.fshou.ceritain.databinding.ActivityDetailBinding
+import java.time.Instant
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 class DetailActivity : AppCompatActivity() {
 
-private lateinit var binding : ActivityDetailBinding
+    private lateinit var binding: ActivityDetailBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
         val story = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra(EXTRA_STORY, Story::class.java ) as Story
+            intent.getParcelableExtra(EXTRA_STORY, Story::class.java) as Story
         } else {
             intent.getParcelableExtra(EXTRA_STORY)!!
         }
@@ -29,14 +34,23 @@ private lateinit var binding : ActivityDetailBinding
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        // Todo: fit image instead of fill
         binding.storyPicture.load(story.photoUrl) {
             crossfade(true)
             transformations(RoundedCornersTransformation(16f))
         }
+        val parsedCreated = Instant.parse(story.createdAt)
+        val createdAtZonedTime = ZonedDateTime.ofInstant(parsedCreated, ZoneId.systemDefault())
+        val createdAtLocalFormat = createdAtZonedTime.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM))
+        with(binding) {
+            userName.text = story.name
+            description.text = story.description
+            createdAt.text = createdAtLocalFormat
+        }
 
-        binding.userName.text = story.name
-        binding.description.text = story.description
     }
+
     companion object {
         const val EXTRA_STORY = "story"
     }

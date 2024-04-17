@@ -55,8 +55,7 @@ class CaptureActivity : AppCompatActivity(), ImageCapture.OnImageSavedCallback {
             contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
             viewModel.setCurrentImageUri(uri)
         } else {
-            // Todo: Show toast
-            Log.d("Photo Picker", "No media selected")
+            Toast.makeText(this, "No Media selected", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -88,6 +87,7 @@ class CaptureActivity : AppCompatActivity(), ImageCapture.OnImageSavedCallback {
             }
         }
         if (!allPermissionsGranted()) {
+            // TODO: show error if is not Granted otherwise show cameraX
             requestCameraPermission.launch(REQUIRED_PERMISSION)
         }
 

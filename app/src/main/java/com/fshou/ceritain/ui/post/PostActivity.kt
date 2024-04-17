@@ -24,7 +24,6 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import java.io.InputStream
 
 class PostActivity : AppCompatActivity() {
 
@@ -56,11 +55,15 @@ class PostActivity : AppCompatActivity() {
         }
 
         //Todo: handle back confirmation
+
     }
 
     private fun postStory(uri: Uri) {
+
+
         val imgFile = uriToFile(uri, this)
         val description = binding.inputDescription.text.toString()
+        // TODO: compress img
 
         val requestBody = description.toRequestBody("text/plain".toMediaType())
         val requestImageFile = imgFile.asRequestBody("image/jpeg".toMediaType())
@@ -76,16 +79,25 @@ class PostActivity : AppCompatActivity() {
         }
     }
 
-    private fun handleResult(response: Result<Response>) {
-        when (response) {
+    private fun handleResult(result: Result<Response>) {
+        when (result) {
             is Result.Loading -> {
-                // Todo: Loading
-                binding.btnPost.isEnabled = false
+                with(binding) {
+                    progressBar.alpha = 1f
+                    btnPost.isEnabled = false
+                    inputDescription.isEnabled = false
+                }
             }
 
             is Result.Success -> {
-                binding.btnPost.isEnabled = true
-                Toast.makeText(this@PostActivity, "Post Success", Toast.LENGTH_SHORT).show()
+                with(binding) {
+                    progressBar.alpha = 0f
+                    btnPost.isEnabled = true
+                    inputDescription.isEnabled = true
+                }
+                Toast.makeText (this@PostActivity, "Post Success", Toast.LENGTH_SHORT).show()
+
+                // Todo: use intent flags to fetch new stories instead of rely on OnResume
                 startActivity(
                     Intent(
                         this,
@@ -95,8 +107,12 @@ class PostActivity : AppCompatActivity() {
             }
 
             is Result.Error -> {
-                binding.btnPost.isEnabled = true
-
+                with(binding) {
+                    progressBar.alpha = 0f
+                    btnPost.isEnabled = true
+                    inputDescription.isEnabled = true
+                }
+                Toast.makeText (this@PostActivity, result.error, Toast.LENGTH_SHORT).show()
             }
 
         }
