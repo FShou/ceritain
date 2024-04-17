@@ -58,7 +58,7 @@ class EditText : AppCompatEditText, View.OnTouchListener {
         setTextColor(textColor)
         when (inputType) {
             InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD, InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD -> {
-                showClearButton()
+                showActionIcon()
             }
             else -> {}
         }
@@ -78,6 +78,11 @@ class EditText : AppCompatEditText, View.OnTouchListener {
                     ContextCompat.getDrawable(context, R.drawable.bg_edittext_error) as Drawable
                 background = bgEditText
             }
+        }
+        alpha = if (!isEnabled) {
+            0.6f
+        }else{
+            1f
         }
     }
 
@@ -103,7 +108,7 @@ class EditText : AppCompatEditText, View.OnTouchListener {
                         } else {
                             setError(null, null)
                         }
-                        if (s.toString().isNotEmpty()) showClearButton() else hideClearButton()
+                        if (s.toString().isNotEmpty()) showActionIcon() else hideActionIcon()
                     }
 
                     InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD, InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD -> {
@@ -117,10 +122,10 @@ class EditText : AppCompatEditText, View.OnTouchListener {
                     else -> {
                         if (s.isEmpty()) {
                             setError("This Cannot be empty", null)
-                            hideClearButton()
+                            hideActionIcon()
                         } else {
                             setError(null, null)
-                            showClearButton()
+                            showActionIcon()
                         }
                     }
                 }
@@ -140,11 +145,11 @@ class EditText : AppCompatEditText, View.OnTouchListener {
     fun CharSequence.isValidPassword() = toString().isNotEmpty() && this.length > 7
 
 
-    private fun showClearButton() {
+    private fun showActionIcon() {
         setButtonDrawables(endOfTheText = actionButtonIcon)
     }
 
-    private fun hideClearButton() {
+    private fun hideActionIcon() {
         setButtonDrawables()
     }
 
@@ -179,31 +184,31 @@ class EditText : AppCompatEditText, View.OnTouchListener {
                 when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
                         setActionIcon()
-                        showClearButton()
+                        showActionIcon()
                         return true
                     }
 
                     MotionEvent.ACTION_UP -> {
                         when (inputType) {
                             InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD -> {
-                                hideClearButton()
+                                hideActionIcon()
                                 inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
                                 setActionIcon()
-                                showClearButton()
+                                showActionIcon()
                             }
 
                             InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD -> {
-                                hideClearButton()
+                                hideActionIcon()
                                 inputType =
                                     InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
                                 setActionIcon()
-                                showClearButton()
+                                showActionIcon()
                             }
 
                             else -> {
                                 setActionIcon()
                                 text?.clear()
-                                hideClearButton()
+                                hideActionIcon()
                             }
                         }
                         return true
@@ -218,10 +223,6 @@ class EditText : AppCompatEditText, View.OnTouchListener {
 
     private fun setActionIcon() {
         actionButtonIcon = when (inputType) {
-            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS -> ContextCompat.getDrawable(
-                context, R.drawable.close
-            ) as Drawable
-
             InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD -> ContextCompat.getDrawable(
                 context, R.drawable.eye
             ) as Drawable

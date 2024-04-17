@@ -108,9 +108,13 @@ class CaptureActivity : AppCompatActivity(), ImageCapture.OnImageSavedCallback {
             }
 
             binding.chooseImg.setOnClickListener {
-                startActivity(Intent(this@CaptureActivity, PostActivity::class.java).apply {
-                    putExtra(EXTRA_IMG_URI, viewModel.currentImageUri.value.toString())
-                })
+                startActivity(
+                    Intent(this@CaptureActivity, PostActivity::class.java)
+                        .putExtra(
+                            EXTRA_IMG_URI,
+                            viewModel.currentImageUri.value.toString()
+                        )
+                )
                 finish()
             }
 

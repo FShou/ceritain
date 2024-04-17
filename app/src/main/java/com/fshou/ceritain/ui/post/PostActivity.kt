@@ -1,5 +1,6 @@
 package com.fshou.ceritain.ui.post
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
@@ -16,6 +17,7 @@ import com.fshou.ceritain.data.remote.response.Response
 import com.fshou.ceritain.databinding.ActivityPostBinding
 import com.fshou.ceritain.ui.capture.CaptureActivity
 import com.fshou.ceritain.ui.factory.ViewModelFactory
+import com.fshou.ceritain.ui.home.HomeActivity
 import com.fshou.ceritain.uriToFile
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
@@ -30,6 +32,7 @@ class PostActivity : AppCompatActivity() {
     private val viewModel: PostViewModel by viewModels {
         ViewModelFactory.getInstance(this)
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPostBinding.inflate(layoutInflater)
@@ -43,21 +46,20 @@ class PostActivity : AppCompatActivity() {
 
         binding.topAppBar.setNavigationOnClickListener { finish() }
         val imgUri = Uri.parse(intent.getStringExtra(CaptureActivity.EXTRA_IMG_URI))
-        binding.postImage.load(imgUri){
+        binding.postImage.load(imgUri) {
             crossfade(true)
             transformations(RoundedCornersTransformation(20f))
         }
 
         binding.btnPost.setOnClickListener {
-            // Todo: Post the story
             postStory(imgUri)
         }
 
-
+        //Todo: handle back confirmation
     }
 
-    private fun postStory(uri: Uri){
-        val imgFile = uriToFile(uri,this)
+    private fun postStory(uri: Uri) {
+        val imgFile = uriToFile(uri, this)
         val description = binding.inputDescription.text.toString()
 
         val requestBody = description.toRequestBody("text/plain".toMediaType())
@@ -68,26 +70,34 @@ class PostActivity : AppCompatActivity() {
             requestImageFile
         )
         lifecycleScope.launch {
-            viewModel.postStory(multipartBody,requestBody).observe(this@PostActivity) {
+            viewModel.postStory(multipartBody, requestBody).observe(this@PostActivity) {
                 handleResult(it)
             }
         }
     }
 
     private fun handleResult(response: Result<Response>) {
-       when(response){
-           is Result.Loading -> {
-               binding.btnPost.isEnabled = false
+        when (response) {
+            is Result.Loading -> {
+                binding.btnPost.isEnabled = false
             }
-           is Result.Success -> {
-               binding.btnPost.isEnabled = true
-               Toast.makeText(this@PostActivity, "Post Success",Toast.LENGTH_SHORT).show()
-           }
-           is Result.Error -> {
-               binding.btnPost.isEnabled = true
 
-           }
+            is Result.Success -> {
+                binding.btnPost.isEnabled = true
+                Toast.makeText(this@PostActivity, "Post Success", Toast.LENGTH_SHORT).show()
+                startActivity(
+                    Intent(
+                        this,
+                        HomeActivity::class.java
+                    ).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                )
+            }
 
-       }
+            is Result.Error -> {
+                binding.btnPost.isEnabled = true
+
+            }
+
+        }
     }
 }

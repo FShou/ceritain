@@ -46,11 +46,11 @@ class LoginActivity : AppCompatActivity() {
         enableEdgeToEdge()
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
-//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-//            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-//            insets
-//        }
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
         setupView()
 
 
@@ -64,7 +64,7 @@ class LoginActivity : AppCompatActivity() {
         binding.btnLogin.setOnClickListener {
             val email = binding.inputEmail.text.toString()
             val password = binding.inputPassword.text.toString()
-            viewModel.login(email,password).observe(this@LoginActivity) {
+            viewModel.login(email, password).observe(this@LoginActivity) {
                 handleResult(it)
             }
         }
@@ -74,14 +74,45 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun handleResult(result: Result<LoginResult>) {
-        when(result){
+        when (result) {
             is Result.Loading -> {
-                // Todo: Progress bar & disable input & button
+                disableLoginForm()
+                with(binding) {
+                    progressBar.alpha = 1f
+                    inputEmail.error = null
+                    inputPassword.error = null
+                }
             }
+
             is Result.Error -> {
-               showToast(result.error)
+                enableLoginForm()
+                binding.progressBar.alpha = 0f
+                when {
+                    result.error.contains("password") -> {
+                        binding.inputPassword.apply {
+                            error = result.error
+                            requestFocus()
+                            setSelection(text?.length ?: 0)
+                        }
+                    }
+
+                    result.error.contains("email") || result.error.contains("User") -> {
+                        binding.inputEmail.apply {
+                            error = result.error
+                            requestFocus()
+                            setSelection(text?.length ?: 0)
+                        }
+                    }
+
+                    result.error.isNotEmpty() -> {
+                        showToast(result.error)
+                    }
+                }
             }
+
             is Result.Success -> {
+                enableLoginForm()
+                binding.progressBar.alpha = 0f
                 showToast("Login Success")
                 val token = result.data.token
                 viewModel.saveLoginUser(token)
@@ -91,7 +122,29 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun showToast(msg: String) = Toast.makeText(this@LoginActivity,msg,Toast.LENGTH_SHORT).show()
+    private fun disableLoginForm() {
+        with(binding) {
+            inputEmail.isEnabled = false
+            inputPassword.isEnabled = false
+            btnLogin.isEnabled = false
+            btnContinue.isEnabled = false
+            btnRegister.isEnabled = false
+        }
+    }
+
+    private fun enableLoginForm() {
+        with(binding) {
+            inputEmail.isEnabled = true
+            inputPassword.isEnabled = true
+            btnLogin.isEnabled = true
+            btnContinue.isEnabled = true
+            btnRegister.isEnabled = true
+        }
+    }
+
+
+    private fun showToast(msg: String) =
+        Toast.makeText(this@LoginActivity, msg, Toast.LENGTH_SHORT).show()
 
     private fun setLoginButtonEnabled() {
         val result = with(binding.inputEmail) {
