@@ -50,16 +50,6 @@
             card_view:layout_constraintStart_toStartOf="@+id/userName"
             card_view:layout_constraintTop_toBottomOf="@+id/userName" />
 
-        <Button
-            android:id="@+id/btnShare"
-            style="@style/Widget.App.Button.Icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="-3dp"
-            card_view:icon="@drawable/share"
-            card_view:layout_constraintBottom_toBottomOf="@+id/profilePicture"
-            card_view:layout_constraintEnd_toEndOf="parent"
-            card_view:layout_constraintTop_toTopOf="@+id/profilePicture" />
 
         <ImageView
             android:id="@+id/storyPicture"
@@ -79,7 +69,7 @@
             android:layout_marginTop="20dp"
             android:fontFamily="@font/plus_jakarta_sans"
             android:maxLines="3"
-            android:text="@string/lorem"
+            tools:text="@string/lorem"
             card_view:layout_constraintEnd_toEndOf="parent"
             card_view:layout_constraintStart_toStartOf="parent"
             card_view:layout_constraintTop_toBottomOf="@id/storyPicture" />

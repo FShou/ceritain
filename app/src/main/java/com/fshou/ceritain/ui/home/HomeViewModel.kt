@@ -7,18 +7,19 @@ import androidx.lifecycle.viewModelScope
 import com.fshou.ceritain.data.AppRepository
 import com.fshou.ceritain.data.Result
 import com.fshou.ceritain.data.remote.response.Story
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class HomeViewModel(private val appRepository: AppRepository): ViewModel() {
 
 
-    // Todo make stories imune to lifecycle
     lateinit var pref: LiveData<String?>
     init {
         getLoginUser()
     }
-    fun getStories(token: String): LiveData<Result<List<Story>>> {
-        return appRepository.getStories(token)
+    suspend fun getStories(): LiveData<Result<List<Story>>>  {
+        val token: String? = appRepository.getLoginUser().first()
+        return appRepository.getStories(token.toString())
     }
 
     fun clearLoginUser() = viewModelScope.launch {

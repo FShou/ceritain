@@ -79,6 +79,7 @@ class PostActivity : AppCompatActivity() {
     private fun handleResult(response: Result<Response>) {
         when (response) {
             is Result.Loading -> {
+                // Todo: Loading
                 binding.btnPost.isEnabled = false
             }
 

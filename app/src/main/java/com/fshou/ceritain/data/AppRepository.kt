@@ -28,7 +28,7 @@ class AppRepository private constructor(
                 val response = apiService.register(name, email, password)
                 emit(Result.Success(response))
             } catch (e: HttpException) {
-                val jsonBody = e.response()?.errorBody()?.toString()
+                val jsonBody = e.response()?.errorBody()?.string()
                 val errorBody = Gson().fromJson(jsonBody, Response::class.java)
                 errorBody.message?.let {
                     emit(Result.Error(it))

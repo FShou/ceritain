@@ -18,7 +18,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:navigationIcon="@drawable/close"
-        app:title="@string/capture"
+        app:title="@string/post"
         app:titleCentered="true"
         app:titleTextColor="@color/emerald" />
 

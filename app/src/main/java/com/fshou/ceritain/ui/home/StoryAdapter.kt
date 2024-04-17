@@ -1,7 +1,11 @@
 package com.fshou.ceritain.ui.home
 
+import android.app.Activity
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.util.Pair
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import coil.transform.CircleCropTransformation
@@ -9,20 +13,38 @@ import coil.transform.RoundedCornersTransformation
 import com.fshou.ceritain.R
 import com.fshou.ceritain.data.remote.response.Story
 import com.fshou.ceritain.databinding.StoryItemLayoutBinding
+import com.fshou.ceritain.ui.detail.DetailActivity
+import java.time.Instant
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
-class StoryAdapter(val story: List<Story>, val storyListener: StoryListener) :
+class StoryAdapter(val story: List<Story>) :
     RecyclerView.Adapter<StoryAdapter.StoryViewHolder>() {
 
     inner class StoryViewHolder(private val binding: StoryItemLayoutBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
+
         fun bind(story: Story) {
             binding.root.setOnClickListener {
-                storyListener.onStoryClicked(story)
+
+                val optionsCompat: ActivityOptionsCompat =
+                    ActivityOptionsCompat.makeSceneTransitionAnimation(
+                        binding.root.context as Activity,
+                        Pair(binding.storyPicture, "profile"),
+                        Pair(binding.userName, "name"),
+                        Pair(binding.description, "description"),
+                        Pair(binding.postedAt, "createdAt")
+                    )
+
+                binding.root.context.startActivity(
+                    Intent(binding.root.context, DetailActivity::class.java).putExtra(DetailActivity.EXTRA_STORY, story),
+                    optionsCompat.toBundle()
+                )
             }
-            binding.btnShare.setOnClickListener {
-                storyListener.onShareClicked(story)
-            }
+
             binding.profilePicture.load(R.drawable.profile) {
                 crossfade(true)
                 transformations(CircleCropTransformation())
@@ -32,8 +54,10 @@ class StoryAdapter(val story: List<Story>, val storyListener: StoryListener) :
                 crossfade(true)
                 transformations(RoundedCornersTransformation(16f))
             }
+            val parsedCreated = Instant.parse(story.createdAt)
+            val createdAtZonedTime = ZonedDateTime.ofInstant(parsedCreated, ZoneId.systemDefault())
             binding.userName.text = story.name
-            binding.postedAt.text = story.createdAt
+            binding.postedAt.text = createdAtZonedTime.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM))
             binding.description.text = story.description
         }
     }
@@ -51,9 +75,4 @@ class StoryAdapter(val story: List<Story>, val storyListener: StoryListener) :
         holder.bind(story[position])
     }
 
-    interface StoryListener {
-        fun onShareClicked(story: Story)
-        fun onStoryClicked(story: Story)
-
-    }
 }

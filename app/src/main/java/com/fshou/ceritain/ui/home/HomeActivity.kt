@@ -6,26 +6,28 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityOptionsCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.fshou.ceritain.R
 import com.fshou.ceritain.data.Result
 import com.fshou.ceritain.data.remote.response.Story
 import com.fshou.ceritain.databinding.ActivityHomeBinding
 import com.fshou.ceritain.ui.capture.CaptureActivity
-import com.fshou.ceritain.ui.detail.DetailActivity
 import com.fshou.ceritain.ui.factory.ViewModelFactory
 import com.fshou.ceritain.ui.onboarding.OnBoardingActivity
+import kotlinx.coroutines.launch
 
 
-class HomeActivity : AppCompatActivity(), StoryAdapter.StoryListener {
+class HomeActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
 
     private lateinit var binding: ActivityHomeBinding
     private val viewModel: HomeViewModel by viewModels {
         ViewModelFactory.getInstance(this)
     }
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,67 +41,71 @@ class HomeActivity : AppCompatActivity(), StoryAdapter.StoryListener {
             insets
         }
 
-        // Todo: overflow refresh
 
 
-        viewModel.pref.observe(this) {token ->
-            if (token != null) {
-                viewModel.getStories(token).observe(this) { result ->
-                    handleResult(result)
-                }
+        lifecycleScope.launch {
+            viewModel.getStories().observe(this@HomeActivity) { result ->
+                handleResult(result)
             }
         }
 
+        binding.swipeRefresh.setOnRefreshListener(this)
+
         binding.fab.setOnClickListener {
-            startActivity(Intent(this, CaptureActivity::class.java))
+            startActivity(Intent(this, CaptureActivity::class.java), ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle())
         }
 
-        binding.topAppBar.setOnMenuItemClickListener {menuItem ->
-            when(menuItem.itemId){
+        binding.topAppBar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
                 R.id.logout -> {
                     viewModel.clearLoginUser()
-                    startActivity(Intent(this,OnBoardingActivity::class.java))
+                    startActivity(Intent(this, OnBoardingActivity::class.java))
                     finish()
                     true
                 }
+
                 else -> false
             }
         }
-
 
 
     }
 
     override fun onResume() {
         super.onResume()
-        viewModel.pref.observe(this) {token ->
-            if (token != null) {
-                viewModel.getStories(token).observe(this) { result ->
-                    handleResult(result)
-                }
+        lifecycleScope.launch {
+            viewModel.getStories().observe(this@HomeActivity) { result ->
+                handleResult(result)
             }
         }
     }
-    
+
 
     private fun handleResult(result: Result<List<Story>>) {
-        when(result){
+        when (result) {
             is Result.Loading -> {
-
+                binding.tvError.alpha = 0f
+                binding.swipeRefresh.isRefreshing = true
             }
+
             is Result.Success -> {
                 showStories(result.data)
+                binding.swipeRefresh.isRefreshing = false
             }
+
             is Result.Error -> {
+                binding.tvError.alpha = 1f
                 showToast(result.error)
+                binding.swipeRefresh.isRefreshing = false
             }
         }
 
     }
-    fun showToast(msg: String) = Toast.makeText(this, msg,Toast.LENGTH_SHORT).show()
+
+    private fun showToast(msg: String) = Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     private fun showStories(stories: List<Story>) {
         val rvLayout = LinearLayoutManager(this)
-        val rvAdapter = StoryAdapter(stories, this)
+        val rvAdapter = StoryAdapter(stories)
 
         binding.rvStories.apply {
             layoutManager = rvLayout
@@ -107,16 +113,13 @@ class HomeActivity : AppCompatActivity(), StoryAdapter.StoryListener {
         }
     }
 
-    override fun onShareClicked(story: Story) {
-//        TODO: Share story
-    }
+    override fun onRefresh() {
+        lifecycleScope.launch {
+            viewModel.getStories().observe(this@HomeActivity) { result ->
+                handleResult(result)
+            }
 
-    override fun onStoryClicked(story: Story) {
-       startActivity(
-           Intent(this@HomeActivity,DetailActivity::class.java).apply {
-               putExtra(DetailActivity.EXTRA_STORY, story)
-           }
-       )
+        }
     }
 
 

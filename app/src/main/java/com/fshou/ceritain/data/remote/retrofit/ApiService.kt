@@ -1,6 +1,5 @@
 package com.fshou.ceritain.data.remote.retrofit
 
-import com.fshou.ceritain.data.remote.response.DetailStoryResponse
 import com.fshou.ceritain.data.remote.response.LoginResponse
 import com.fshou.ceritain.data.remote.response.Response
 import com.fshou.ceritain.data.remote.response.StoriesResponse
@@ -13,7 +12,6 @@ import retrofit2.http.Header
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
-import retrofit2.http.Path
 
 interface ApiService {
 
@@ -39,7 +37,6 @@ interface ApiService {
         @Part file: MultipartBody.Part,
         @Part("description") description: RequestBody,
         @Header("Authorization") bearerToken: String
-        // Todo: Post Story
     ):  Response
 
     @GET("stories")
@@ -47,11 +44,5 @@ interface ApiService {
         @Header("Authorization") bearerToken: String
     ): StoriesResponse
 
-
-
-    @GET("stories/{id}")
-    suspend fun getDetailStory(
-        @Path("id") id: String
-    ): DetailStoryResponse
 
 }

@@ -5,6 +5,64 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".ui.detail.DetailActivity">
+
+    <ImageView
+        android:id="@+id/storyPicture"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:transitionName="profile"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@tools:sample/backgrounds/scenic"
+
+        />
+
+    <TextView
+        android:id="@+id/userName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="14dp"
+        android:fontFamily="@font/plus_jakarta_sans_semi_bold"
+        android:textSize="18dp"
+        android:text="@string/username"
+        android:textColor="@color/black"
+        android:transitionName="name"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/storyPicture" />
+
+
+    <TextView
+        android:id="@+id/createdAt"
+        android:transitionName="createdAt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:fontFamily="@font/plus_jakarta_sans"
+        android:text="Posted at"
+        android:textColor="#9F9F9F"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/userName"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/description"
+        android:layout_marginHorizontal="24dp"
+        android:transitionName="description"
+        android:textColor="@color/black"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/plus_jakarta_sans"
+        tools:text="@string/lorem"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/userName" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

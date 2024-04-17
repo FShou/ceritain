@@ -6,27 +6,36 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.fshou.ceritain.R
+import coil.load
+import coil.transform.RoundedCornersTransformation
 import com.fshou.ceritain.data.remote.response.Story
-import com.fshou.ceritain.ui.home.HomeActivity
+import com.fshou.ceritain.databinding.ActivityDetailBinding
 
 class DetailActivity : AppCompatActivity() {
 
-
+private lateinit var binding : ActivityDetailBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_detail)
+        binding = ActivityDetailBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         val story = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra(EXTRA_STORY, Story::class.java ) as Story
         } else {
             intent.getParcelableExtra(EXTRA_STORY)!!
         }
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        binding.storyPicture.load(story.photoUrl) {
+            crossfade(true)
+            transformations(RoundedCornersTransformation(16f))
+        }
+
+        binding.userName.text = story.name
+        binding.description.text = story.description
     }
     companion object {
         const val EXTRA_STORY = "story"

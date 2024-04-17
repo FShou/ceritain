@@ -55,6 +55,7 @@ class CaptureActivity : AppCompatActivity(), ImageCapture.OnImageSavedCallback {
             contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
             viewModel.setCurrentImageUri(uri)
         } else {
+            // Todo: Show toast
             Log.d("Photo Picker", "No media selected")
         }
     }
@@ -62,6 +63,7 @@ class CaptureActivity : AppCompatActivity(), ImageCapture.OnImageSavedCallback {
     private fun handlePermissionGranted(isGranted: Boolean) {
         // TODO: show error if is not Granted otherwise show cameraX
         if (isGranted) {
+            startCamera()
             Toast.makeText(this, "Permission request granted", Toast.LENGTH_LONG).show()
         } else {
             Toast.makeText(this, "Permission request denied", Toast.LENGTH_LONG).show()
@@ -78,7 +80,7 @@ class CaptureActivity : AppCompatActivity(), ImageCapture.OnImageSavedCallback {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        binding.topAppBar.setNavigationOnClickListener { finish() }
+        binding.topAppBar.setNavigationOnClickListener { finishAfterTransition() }
         viewModel.currentImageUri.observe(this) {
             if (it != null) {
                 showPreviewImage(it)
@@ -216,6 +218,14 @@ class CaptureActivity : AppCompatActivity(), ImageCapture.OnImageSavedCallback {
             Toast.LENGTH_SHORT
         ).show()
         Log.e(TAG, "onError: ${exception.message}")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(application)
+        val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
+        cameraProvider.unbindAll()
+
     }
 
     companion object {

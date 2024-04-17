@@ -11,6 +11,9 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import com.fshou.ceritain.R
 import com.fshou.ceritain.databinding.ActivityRegisterBinding
 import com.fshou.ceritain.ui.factory.ViewModelFactory
 import com.fshou.ceritain.ui.login.LoginActivity
@@ -28,6 +31,7 @@ class RegisterActivity : AppCompatActivity() {
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             setRegisterButtonEnabled()
         }
+
         override fun afterTextChanged(s: Editable?) {}
     }
 
@@ -35,10 +39,11 @@ class RegisterActivity : AppCompatActivity() {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             if (!isRepeatPasswordSame()) {
-                binding.inputRepeatPassword.setError("Password is unmatched",null)
+                binding.inputRepeatPassword.setError("Password is unmatched", null)
             }
             setRegisterButtonEnabled()
         }
+
         override fun afterTextChanged(s: Editable?) {}
     }
 
@@ -47,11 +52,11 @@ class RegisterActivity : AppCompatActivity() {
         enableEdgeToEdge()
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
-//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-//            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-//            insets
-//        }
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
         setupView()
 
         binding.inputName.addTextChangedListener(validationWatcher)
@@ -64,44 +69,74 @@ class RegisterActivity : AppCompatActivity() {
             println(email)
             val password = binding.inputPassword.text.toString()
 
-            viewModel.register(name,email,password).observe(this) {
+            viewModel.register(name, email, password).observe(this) {
                 handleResult(it)
             }
 
         }
         binding.btnLogin.setOnClickListener {
-            startActivity(Intent(this,LoginActivity::class.java))
+            startActivity(Intent(this, LoginActivity::class.java))
             finish()
         }
 
     }
 
-    private fun handleResult(result: Result<Response>){
-        when(result){
+    private fun handleResult(result: Result<Response>) {
+        when (result) {
             is Result.Loading -> {
-                // Todo: Progress bar , disable input & Button
+                disableLoginForm()
+                binding.progressBar.alpha = 1f
             }
+
             is Result.Error -> {
+                enableLoginForm()
+                binding.progressBar.alpha = 0f
                 showToast(result.error)
             }
+
             is Result.Success -> {
+                binding.progressBar.alpha = 0f
                 showToast("Register Success")
+                startActivity(Intent(this, LoginActivity::class.java))
+                finish()
             }
         }
     }
 
-    private fun showToast(msg: String) = Toast.makeText(this, msg,Toast.LENGTH_SHORT).show()
+    private fun disableLoginForm() {
+        with(binding) {
+            inputName.isEnabled = false
+            inputEmail.isEnabled = false
+            inputPassword.isEnabled = false
+            inputRepeatPassword.isEnabled = false
+            btnLogin.isEnabled = false
+            btnRegister.isEnabled = false
+        }
+    }
+
+    private fun enableLoginForm() {
+        with(binding) {
+            inputName.isEnabled = true
+            inputEmail.isEnabled = true
+            inputPassword.isEnabled = true
+            inputRepeatPassword.isEnabled = true
+            btnLogin.isEnabled = true
+            btnRegister.isEnabled = true
+        }
+    }
+
+    private fun showToast(msg: String) = Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
 
 
     private fun isRepeatPasswordSame() =
         binding.inputPassword.text.toString() == binding.inputRepeatPassword.text.toString()
 
-    private fun setRegisterButtonEnabled(){
+    private fun setRegisterButtonEnabled() {
         val result = with(binding.inputEmail) {
             text?.isValidEmail() ?: false
-        } && with(binding.inputPassword){
+        } && with(binding.inputPassword) {
             text?.isValidPassword() ?: false
-        } && isRepeatPasswordSame()    && !binding.inputName.text.isNullOrEmpty()
+        } && isRepeatPasswordSame() && !binding.inputName.text.isNullOrEmpty()
 
         binding.btnRegister.isEnabled = result
     }
