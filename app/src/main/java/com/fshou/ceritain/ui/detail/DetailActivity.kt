@@ -35,14 +35,15 @@ class DetailActivity : AppCompatActivity() {
             insets
         }
 
-        // Todo: fit image instead of fill
         binding.storyPicture.load(story.photoUrl) {
             crossfade(true)
             transformations(RoundedCornersTransformation(16f))
         }
+        binding.topAppBar.setNavigationOnClickListener { finishAfterTransition() }
         val parsedCreated = Instant.parse(story.createdAt)
         val createdAtZonedTime = ZonedDateTime.ofInstant(parsedCreated, ZoneId.systemDefault())
-        val createdAtLocalFormat = createdAtZonedTime.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM))
+        val createdAtLocalFormat =
+            createdAtZonedTime.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM))
         with(binding) {
             userName.text = story.name
             description.text = story.description

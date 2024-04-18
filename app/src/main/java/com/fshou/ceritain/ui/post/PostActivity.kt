@@ -4,21 +4,26 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import coil.load
 import coil.transform.RoundedCornersTransformation
+import com.fshou.ceritain.R
 import com.fshou.ceritain.data.Result
 import com.fshou.ceritain.data.remote.response.Response
 import com.fshou.ceritain.databinding.ActivityPostBinding
+import com.fshou.ceritain.reduceFileImage
 import com.fshou.ceritain.ui.capture.CaptureActivity
 import com.fshou.ceritain.ui.factory.ViewModelFactory
 import com.fshou.ceritain.ui.home.HomeActivity
 import com.fshou.ceritain.uriToFile
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
@@ -43,7 +48,7 @@ class PostActivity : AppCompatActivity() {
             insets
         }
 
-        binding.topAppBar.setNavigationOnClickListener { finish() }
+        binding.topAppBar.setNavigationOnClickListener { showExitAlert() }
         val imgUri = Uri.parse(intent.getStringExtra(CaptureActivity.EXTRA_IMG_URI))
         binding.postImage.load(imgUri) {
             crossfade(true)
@@ -53,17 +58,44 @@ class PostActivity : AppCompatActivity() {
         binding.btnPost.setOnClickListener {
             postStory(imgUri)
         }
+        this.onBackPressedDispatcher.addCallback(this) {
+            // Show your dialog and handle navigation
+            isEnabled = true
+//            println("is this is runni")
+            showExitAlert()
+        }
 
-        //Todo: handle back confirmation
 
     }
 
+
+    private fun showExitAlert() {
+        MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_App_MaterialAlertDialog)
+            .setTitle("Are you sure ?")
+            .setMessage("This will not be saved")
+            .setPositiveButton("Continue") {_,_ ->
+                startActivity(
+                    Intent(
+                        this,
+                        HomeActivity::class.java
+                    ).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                )
+            }
+            .setNegativeButton("Cancel") {dialog,_ ->
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+
     private fun postStory(uri: Uri) {
-
-
-        val imgFile = uriToFile(uri, this)
+        with(binding) {
+            progressBar.alpha = 1f
+            btnPost.isEnabled = false
+            inputDescription.isEnabled = false
+        }
+        val imgFile = uriToFile(uri, this).reduceFileImage()
         val description = binding.inputDescription.text.toString()
-        // TODO: compress img
 
         val requestBody = description.toRequestBody("text/plain".toMediaType())
         val requestImageFile = imgFile.asRequestBody("image/jpeg".toMediaType())
@@ -95,9 +127,7 @@ class PostActivity : AppCompatActivity() {
                     btnPost.isEnabled = true
                     inputDescription.isEnabled = true
                 }
-                Toast.makeText (this@PostActivity, "Post Success", Toast.LENGTH_SHORT).show()
-
-                // Todo: use intent flags to fetch new stories instead of rely on OnResume
+                Toast.makeText(this@PostActivity, "Post Success", Toast.LENGTH_SHORT).show()
                 startActivity(
                     Intent(
                         this,
@@ -112,7 +142,7 @@ class PostActivity : AppCompatActivity() {
                     btnPost.isEnabled = true
                     inputDescription.isEnabled = true
                 }
-                Toast.makeText (this@PostActivity, result.error, Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@PostActivity, result.error, Toast.LENGTH_SHORT).show()
             }
 
         }

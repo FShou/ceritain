@@ -74,11 +74,11 @@ class HomeActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
 
     override fun onResume() {
         super.onResume()
-        lifecycleScope.launch {
-            viewModel.getStories().observe(this@HomeActivity) { result ->
-                handleResult(result)
-            }
-        }
+//        lifecycleScope.launch {
+//            viewModel.getStories().observe(this@HomeActivity) { result ->
+//                handleResult(result)
+//            }
+//        }
     }
 
 
