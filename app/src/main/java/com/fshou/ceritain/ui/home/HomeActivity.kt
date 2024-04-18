@@ -19,6 +19,7 @@ import com.fshou.ceritain.databinding.ActivityHomeBinding
 import com.fshou.ceritain.ui.capture.CaptureActivity
 import com.fshou.ceritain.ui.factory.ViewModelFactory
 import com.fshou.ceritain.ui.onboarding.OnBoardingActivity
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
 
 
@@ -58,10 +59,7 @@ class HomeActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
         binding.topAppBar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.logout -> {
-                    // Todo Confirmation to Logout
-                    viewModel.clearLoginUser()
-                    startActivity(Intent(this, OnBoardingActivity::class.java))
-                    finish()
+                    showExitAlert()
                     true
                 }
 
@@ -72,13 +70,23 @@ class HomeActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
 
     }
 
-    override fun onResume() {
-        super.onResume()
-//        lifecycleScope.launch {
-//            viewModel.getStories().observe(this@HomeActivity) { result ->
-//                handleResult(result)
-//            }
-//        }
+    private fun showExitAlert() {
+        MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_App_MaterialAlertDialog)
+            .setTitle("Are you sure ?")
+            .setMessage("Confirm to Log Out")
+            .setPositiveButton("Log out") {_,_ ->
+                viewModel.clearLoginUser()
+                startActivity(
+                    Intent(
+                        this,
+                        OnBoardingActivity::class.java
+                    ).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                )
+            }
+            .setNegativeButton("Cancel") {dialog,_ ->
+                dialog.dismiss()
+            }
+            .show()
     }
 
 
