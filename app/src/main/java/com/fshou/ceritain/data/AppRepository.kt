@@ -8,6 +8,7 @@ import com.fshou.ceritain.data.remote.response.Response
 import com.fshou.ceritain.data.remote.response.Story
 import com.fshou.ceritain.data.remote.retrofit.ApiService
 import com.google.gson.Gson
+import kotlinx.coroutines.flow.first
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.HttpException
@@ -65,7 +66,8 @@ class AppRepository private constructor(
     fun getStories(): LiveData<Result<List<Story>>> = liveData {
         emit(Result.Loading)
         try {
-            val response = apiService.getStories()
+            val token = getLoginUser().first()
+            val response = apiService.getStories("Bearer $token")
             response.listStory?.let {
                 emit(Result.Success(it))
             }
@@ -89,7 +91,8 @@ class AppRepository private constructor(
     ): LiveData<Result<Response>> = liveData {
         emit(Result.Loading)
         try {
-            val response = apiService.postStory(imgFile, description)
+            val token = getLoginUser().first()
+            val response = apiService.postStory(imgFile, description, "Bearer $token")
             emit(Result.Success(response))
         }catch (e: HttpException) {
             val jsonBody = e.response()?.errorBody()?.string()
