@@ -35,7 +35,7 @@ class DetailActivity : AppCompatActivity() {
             insets
         }
 
-        binding.storyPicture.load(story.photoUrl) {
+        binding.ivDetailPhoto.load(story.photoUrl) {
             crossfade(true)
             transformations(RoundedCornersTransformation(16f))
         }
@@ -45,8 +45,8 @@ class DetailActivity : AppCompatActivity() {
         val createdAtLocalFormat =
             createdAtZonedTime.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM))
         with(binding) {
-            userName.text = story.name
-            description.text = story.description
+            tvDetailName.text = story.name
+            tvDetailDescription.text = story.description
             createdAt.text = createdAtLocalFormat
         }
 

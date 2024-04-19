@@ -27,7 +27,7 @@
             tools:src="@tools:sample/avatars" />
 
         <TextView
-            android:id="@+id/userName"
+            android:id="@+id/tv_item_name"
             android:textColor="@color/black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -47,12 +47,12 @@
             android:textColor="#9F9F9F"
             android:textSize="12sp"
             card_view:layout_constraintBottom_toBottomOf="@+id/profilePicture"
-            card_view:layout_constraintStart_toStartOf="@+id/userName"
-            card_view:layout_constraintTop_toBottomOf="@+id/userName" />
+            card_view:layout_constraintStart_toStartOf="@+id/tv_item_name"
+            card_view:layout_constraintTop_toBottomOf="@+id/tv_item_name" />
 
 
         <ImageView
-            android:id="@+id/storyPicture"
+            android:id="@+id/iv_item_photo"
             android:layout_width="match_parent"
             android:layout_height="220dp"
             android:layout_marginTop="20dp"
@@ -72,7 +72,7 @@
             tools:text="@string/lorem"
             card_view:layout_constraintEnd_toEndOf="parent"
             card_view:layout_constraintStart_toStartOf="parent"
-            card_view:layout_constraintTop_toBottomOf="@id/storyPicture" />
+            card_view:layout_constraintTop_toBottomOf="@id/iv_item_photo" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

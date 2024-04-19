@@ -1,4 +1,4 @@
-package com.fshou.ceritain.ui.home
+package com.fshou.ceritain.ui.adapter
 
 import android.app.Activity
 import android.content.Intent
@@ -33,8 +33,8 @@ class StoryAdapter(val story: List<Story>) :
                 val optionsCompat: ActivityOptionsCompat =
                     ActivityOptionsCompat.makeSceneTransitionAnimation(
                         binding.root.context as Activity,
-                        Pair(binding.storyPicture, "profile"),
-                        Pair(binding.userName, "name"),
+                        Pair(binding.ivItemPhoto, "profile"),
+                        Pair(binding.tvItemName, "name"),
                         Pair(binding.description, "description"),
                         Pair(binding.postedAt, "createdAt")
                     )
@@ -50,13 +50,13 @@ class StoryAdapter(val story: List<Story>) :
                 transformations(CircleCropTransformation())
             }
 
-            binding.storyPicture.load(story.photoUrl) {
+            binding.ivItemPhoto.load(story.photoUrl) {
                 crossfade(true)
                 transformations(RoundedCornersTransformation(16f))
             }
             val parsedCreated = Instant.parse(story.createdAt)
             val createdAtZonedTime = ZonedDateTime.ofInstant(parsedCreated, ZoneId.systemDefault())
-            binding.userName.text = story.name
+            binding.tvItemName.text = story.name
             binding.postedAt.text = createdAtZonedTime.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM))
             binding.description.text = story.description
         }

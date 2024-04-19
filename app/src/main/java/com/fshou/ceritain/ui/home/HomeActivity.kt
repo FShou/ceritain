@@ -16,6 +16,7 @@ import com.fshou.ceritain.R
 import com.fshou.ceritain.data.Result
 import com.fshou.ceritain.data.remote.response.Story
 import com.fshou.ceritain.databinding.ActivityHomeBinding
+import com.fshou.ceritain.ui.adapter.StoryAdapter
 import com.fshou.ceritain.ui.capture.CaptureActivity
 import com.fshou.ceritain.ui.factory.ViewModelFactory
 import com.fshou.ceritain.ui.onboarding.OnBoardingActivity

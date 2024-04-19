@@ -24,7 +24,7 @@
         app:titleTextColor="@color/emerald" />
 
     <ImageView
-        android:id="@+id/storyPicture"
+        android:id="@+id/iv_detail_photo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:adjustViewBounds="true"
@@ -39,7 +39,7 @@
         />
 
     <TextView
-        android:id="@+id/userName"
+        android:id="@+id/tv_detail_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
@@ -50,7 +50,7 @@
         android:textSize="18sp"
         android:transitionName="name"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/storyPicture" />
+        app:layout_constraintTop_toBottomOf="@id/iv_detail_photo" />
 
 
     <TextView
@@ -64,10 +64,10 @@
         android:textSize="12sp"
         android:transitionName="createdAt"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/userName" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_detail_name" />
 
     <TextView
-        android:id="@+id/description"
+        android:id="@+id/tv_detail_description"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
