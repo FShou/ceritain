@@ -48,8 +48,7 @@
         />
 
 
-    <view
-        class="com.fshou.ceritain.ui.Button$Primary"
+    <com.fshou.ceritain.ui.PrimaryButton
         android:id="@+id/btnPost"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -69,6 +68,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:alpha="0"
+        android:visibility="gone"
         />
 </androidx.constraintlayout.widget.ConstraintLayout>

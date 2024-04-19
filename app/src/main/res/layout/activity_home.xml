@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -40,16 +41,17 @@
 
             <TextView
                 android:id="@+id/tvError"
-                android:text="@string/an_error_occured"
-                android:fontFamily="@font/plus_jakarta_sans_medium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
+                android:alpha="1"
+                android:fontFamily="@font/plus_jakarta_sans_medium"
+                android:text="@string/an_error_occured"
+                android:textAlignment="center"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:alpha="0"
-                />
+                app:layout_constraintVertical_bias="0.29000002" />
 
 
             <androidx.swiperefreshlayout.widget.SwipeRefreshLayout

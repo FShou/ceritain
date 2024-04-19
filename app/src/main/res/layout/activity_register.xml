@@ -69,7 +69,7 @@
 
 
     <com.fshou.ceritain.ui.EditText
-        android:id="@+id/inputName"
+        android:id="@+id/ed_register_name"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         app:layout_constraintTop_toBottomOf="@id/tvName"
@@ -88,7 +88,7 @@
         android:text="@string/email"
         android:textSize="14sp"
         android:fontFamily="@font/plus_jakarta_sans_medium"
-        app:layout_constraintTop_toBottomOf="@id/inputName"
+        app:layout_constraintTop_toBottomOf="@id/ed_register_name"
         app:layout_constraintStart_toStartOf="parent"
         android:textColor="@color/emerald"
         android:layout_marginHorizontal="24dp"
@@ -96,7 +96,7 @@
 
 
     <com.fshou.ceritain.ui.EditText
-        android:id="@+id/inputEmail"
+        android:id="@+id/ed_register_email"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         app:layout_constraintTop_toBottomOf="@id/tvEmail"
@@ -113,7 +113,7 @@
         android:text="@string/password"
         android:textSize="14sp"
         android:fontFamily="@font/plus_jakarta_sans_medium"
-        app:layout_constraintTop_toBottomOf="@id/inputEmail"
+        app:layout_constraintTop_toBottomOf="@id/ed_register_email"
         app:layout_constraintStart_toStartOf="parent"
         android:textColor="@color/emerald"
         android:layout_marginHorizontal="24dp"
@@ -121,7 +121,7 @@
 
 
     <com.fshou.ceritain.ui.EditText
-        android:id="@+id/inputPassword"
+        android:id="@+id/ed_register_password"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         app:layout_constraintTop_toBottomOf="@id/tvPassword"
@@ -139,7 +139,7 @@
         android:text="@string/repeat_password"
         android:textSize="14sp"
         android:fontFamily="@font/plus_jakarta_sans_medium"
-        app:layout_constraintTop_toBottomOf="@id/inputPassword"
+        app:layout_constraintTop_toBottomOf="@id/ed_register_password"
         app:layout_constraintStart_toStartOf="parent"
         android:textColor="@color/emerald"
         android:layout_marginHorizontal="24dp"
@@ -156,9 +156,8 @@
         android:inputType="textPassword"
         android:autofillHints="password" />
 
-    <view
+    <com.fshou.ceritain.ui.PrimaryButton
         android:id="@+id/btnRegister"
-        class="com.fshou.ceritain.ui.Button$Primary"
         android:layout_width="0dp"
         android:layout_height="48dp"
         android:layout_marginHorizontal="24dp"
@@ -172,6 +171,7 @@
 
 
     <TextView
+        android:id="@+id/tvOther"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/already_have_an_account"
@@ -186,7 +186,7 @@
 
 
 
-    <view class="com.fshou.ceritain.ui.Button$Secondary"
+    <com.fshou.ceritain.ui.SecondaryButton
         android:id="@+id/btnLogin"
         android:layout_width="0dp"
         android:layout_height="48dp"
@@ -202,10 +202,41 @@
         style="?android:attr/progressBarStyle"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:alpha="0"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/btnRegister"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/tvName" />
+
+    <ImageView
+        android:id="@+id/checkAnim"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginBottom="4dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.40"
+        app:srcCompat="@drawable/check_animated" />
+
+    <TextView
+        android:id="@+id/registerSuccess"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:textSize="18sp"
+        android:fontFamily="@font/plus_jakarta_sans_medium"
+        android:text="Registered Succesfully"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/checkAnim" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -33,6 +33,11 @@ class AppRepository private constructor(
                 errorBody.message?.let {
                     emit(Result.Error(it))
                 }
+            }catch (e: Exception) {
+                val msg = e.message
+                msg?.let {
+                    emit(Result.Error(it))
+                }
             }
         }
 
@@ -49,6 +54,11 @@ class AppRepository private constructor(
             errorBody.message?.let {
                 emit(Result.Error(it))
             }
+        }catch (e: Exception) {
+            val msg = e.message
+            msg?.let {
+                emit(Result.Error(it))
+            }
         }
     }
 
@@ -63,6 +73,11 @@ class AppRepository private constructor(
             val jsonBody = e.response()?.errorBody()?.string()
             val errorBoody = Gson().fromJson(jsonBody, Response::class.java)
             errorBoody.message?.let {
+                emit(Result.Error(it))
+            }
+        } catch (e: Exception) {
+            val msg = e.message
+            msg?.let {
                 emit(Result.Error(it))
             }
         }
@@ -82,6 +97,11 @@ class AppRepository private constructor(
             val jsonBody = e.response()?.errorBody()?.string()
             val errorBoody = Gson().fromJson(jsonBody, Response::class.java)
             errorBoody.message?.let {
+                emit(Result.Error(it))
+            }
+        }catch (e: Exception) {
+            val msg = e.message
+            msg?.let {
                 emit(Result.Error(it))
             }
         }

@@ -18,6 +18,8 @@ class HomeViewModel(private val appRepository: AppRepository): ViewModel() {
         getLoginUser()
     }
     suspend fun getStories(): LiveData<Result<List<Story>>>  {
+
+        // Todo : move getting token to repo
         val token: String? = appRepository.getLoginUser().first()
         return appRepository.getStories(token.toString())
     }

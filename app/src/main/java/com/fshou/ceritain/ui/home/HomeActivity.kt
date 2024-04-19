@@ -58,7 +58,7 @@ class HomeActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
 
         binding.topAppBar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.logout -> {
+                R.id.action_logout -> {
                     showExitAlert()
                     true
                 }
@@ -113,6 +113,11 @@ class HomeActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
 
     private fun showToast(msg: String) = Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     private fun showStories(stories: List<Story>) {
+        if (stories.isEmpty()) {
+            binding.tvError.text = "No Story Found yet, Post a Story"
+            return
+        }
+
         val rvLayout = LinearLayoutManager(this)
         val rvAdapter = StoryAdapter(stories)
 

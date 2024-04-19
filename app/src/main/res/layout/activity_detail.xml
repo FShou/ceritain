@@ -47,7 +47,7 @@
         android:fontFamily="@font/plus_jakarta_sans_semi_bold"
         android:text="@string/username"
         android:textColor="@color/black"
-        android:textSize="18dp"
+        android:textSize="18sp"
         android:transitionName="name"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/storyPicture" />

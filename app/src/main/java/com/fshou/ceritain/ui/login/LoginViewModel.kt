@@ -6,7 +6,7 @@ import com.fshou.ceritain.data.AppRepository
 import kotlinx.coroutines.launch
 
 class LoginViewModel(
-    val appRepository: AppRepository
+    private val appRepository: AppRepository
 ) : ViewModel() {
 
     fun login(email: String, password: String) = appRepository.login(email, password)

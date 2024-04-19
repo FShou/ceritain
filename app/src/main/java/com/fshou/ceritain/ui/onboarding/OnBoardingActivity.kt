@@ -8,9 +8,6 @@ import android.view.WindowManager
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.fshou.ceritain.R
 import com.fshou.ceritain.databinding.ActivityOnBoardingBinding
 import com.fshou.ceritain.ui.factory.ViewModelFactory
 import com.fshou.ceritain.ui.home.HomeActivity

@@ -1,10 +1,14 @@
 package com.fshou.ceritain.ui.login
 
 import android.content.Intent
+import android.graphics.drawable.Animatable2.AnimationCallback
+import android.graphics.drawable.AnimatedVectorDrawable
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
 import android.widget.Toast
@@ -14,12 +18,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.fshou.ceritain.R
+import com.fshou.ceritain.data.Result
 import com.fshou.ceritain.data.remote.response.LoginResult
 import com.fshou.ceritain.databinding.ActivityLoginBinding
 import com.fshou.ceritain.ui.factory.ViewModelFactory
-import com.fshou.ceritain.ui.register.RegisterActivity
-import com.fshou.ceritain.data.Result
 import com.fshou.ceritain.ui.home.HomeActivity
+import com.fshou.ceritain.ui.register.RegisterActivity
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
@@ -62,15 +66,15 @@ class LoginActivity : AppCompatActivity() {
             finish()
         }
         binding.btnLogin.setOnClickListener {
-            val email = binding.inputEmail.text.toString()
-            val password = binding.inputPassword.text.toString()
+            val email = binding.edLoginEmail.text.toString()
+            val password = binding.edLoginPassword.text.toString()
             viewModel.login(email, password).observe(this@LoginActivity) {
                 handleResult(it)
             }
         }
 
-        binding.inputEmail.addTextChangedListener(validationWatcher)
-        binding.inputPassword.addTextChangedListener(validationWatcher)
+        binding.edLoginEmail.addTextChangedListener(validationWatcher)
+        binding.edLoginPassword.addTextChangedListener(validationWatcher)
     }
 
     private fun handleResult(result: Result<LoginResult>) {
@@ -78,18 +82,18 @@ class LoginActivity : AppCompatActivity() {
             is Result.Loading -> {
                 disableLoginForm()
                 with(binding) {
-                    progressBar.alpha = 1f
-                    inputEmail.error = null
-                    inputPassword.error = null
+                    progressBar.visibility = View.VISIBLE
+                    edLoginEmail.error = null
+                    edLoginPassword.error = null
                 }
             }
 
             is Result.Error -> {
                 enableLoginForm()
-                binding.progressBar.alpha = 0f
+                binding.progressBar.visibility = View.GONE
                 when {
                     result.error.contains("password") -> {
-                        binding.inputPassword.apply {
+                        binding.edLoginPassword.apply {
                             error = result.error
                             requestFocus()
                             setSelection(text?.length ?: 0)
@@ -97,7 +101,7 @@ class LoginActivity : AppCompatActivity() {
                     }
 
                     result.error.contains("email") || result.error.contains("User") -> {
-                        binding.inputEmail.apply {
+                        binding.edLoginEmail.apply {
                             error = result.error
                             requestFocus()
                             setSelection(text?.length ?: 0)
@@ -111,21 +115,43 @@ class LoginActivity : AppCompatActivity() {
             }
 
             is Result.Success -> {
-                enableLoginForm()
-                binding.progressBar.alpha = 0f
-                showToast("Login Success")
                 val token = result.data.token
                 viewModel.saveLoginUser(token)
-                startActivity(Intent(this@LoginActivity,HomeActivity::class.java))
-                finish()
+
+                val animatedCheck = binding.checkAnim.drawable as AnimatedVectorDrawable
+                animatedCheck.registerAnimationCallback(object : AnimationCallback(){
+                    override fun onAnimationEnd(drawable: Drawable?) {
+                        super.onAnimationEnd(drawable)
+                        startActivity(Intent(this@LoginActivity, HomeActivity::class.java))
+                        finish()
+                    }
+                })
+
+                with(binding) {
+                    tvEmail.visibility = View.GONE
+                    tvPassword.visibility = View.GONE
+                    tvOther.visibility = View.GONE
+                    edLoginEmail.visibility = View.GONE
+                    edLoginPassword.visibility = View.GONE
+                    btnLogin.visibility = View.GONE
+                    btnContinue.visibility = View.GONE
+                    btnRegister.visibility = View.GONE
+                    progressBar.visibility = View.GONE
+                    checkAnim.visibility= View.VISIBLE
+                    loginSucces.visibility= View.VISIBLE
+                }
+
+                animatedCheck.start()
+
+
             }
         }
     }
 
     private fun disableLoginForm() {
         with(binding) {
-            inputEmail.isEnabled = false
-            inputPassword.isEnabled = false
+            edLoginEmail.isEnabled = false
+            edLoginPassword.isEnabled = false
             btnLogin.isEnabled = false
             btnContinue.isEnabled = false
             btnRegister.isEnabled = false
@@ -134,8 +160,8 @@ class LoginActivity : AppCompatActivity() {
 
     private fun enableLoginForm() {
         with(binding) {
-            inputEmail.isEnabled = true
-            inputPassword.isEnabled = true
+            edLoginEmail.isEnabled = true
+            edLoginPassword.isEnabled = true
             btnLogin.isEnabled = true
             btnContinue.isEnabled = true
             btnRegister.isEnabled = true
@@ -147,9 +173,9 @@ class LoginActivity : AppCompatActivity() {
         Toast.makeText(this@LoginActivity, msg, Toast.LENGTH_SHORT).show()
 
     private fun setLoginButtonEnabled() {
-        val result = with(binding.inputEmail) {
+        val result = with(binding.edLoginEmail) {
             text?.isValidEmail() ?: false
-        } && with(binding.inputPassword) {
+        } && with(binding.edLoginPassword) {
             text?.isValidPassword() ?: false
         }
         binding.btnLogin.isEnabled = result

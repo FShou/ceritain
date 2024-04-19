@@ -24,7 +24,9 @@ import com.fshou.ceritain.ui.factory.ViewModelFactory
 import com.fshou.ceritain.ui.home.HomeActivity
 import com.fshou.ceritain.uriToFile
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -127,7 +129,10 @@ class PostActivity : AppCompatActivity() {
                     btnPost.isEnabled = true
                     inputDescription.isEnabled = true
                 }
-                Toast.makeText(this@PostActivity, "Post Success", Toast.LENGTH_SHORT).show()
+                runBlocking {
+                    Toast.makeText(this@PostActivity, "Post Success", Toast.LENGTH_SHORT).show()
+                    delay(2000)
+                }
                 startActivity(
                     Intent(
                         this,

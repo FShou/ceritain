@@ -1,10 +1,14 @@
 package com.fshou.ceritain.ui.register
 
 import android.content.Intent
+import android.graphics.drawable.Animatable2
+import android.graphics.drawable.AnimatedVectorDrawable
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
 import android.widget.Toast
@@ -14,11 +18,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.fshou.ceritain.R
+import com.fshou.ceritain.data.Result
+import com.fshou.ceritain.data.remote.response.Response
 import com.fshou.ceritain.databinding.ActivityRegisterBinding
 import com.fshou.ceritain.ui.factory.ViewModelFactory
 import com.fshou.ceritain.ui.login.LoginActivity
-import com.fshou.ceritain.data.Result
-import com.fshou.ceritain.data.remote.response.Response
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -59,15 +63,16 @@ class RegisterActivity : AppCompatActivity() {
         }
         setupView()
 
-        binding.inputName.addTextChangedListener(validationWatcher)
-        binding.inputEmail.addTextChangedListener(validationWatcher)
-        binding.inputPassword.addTextChangedListener(passwordWatcher)
+        binding.edRegisterName.addTextChangedListener(validationWatcher)
+        binding.edRegisterEmail.addTextChangedListener(validationWatcher)
+        binding.edRegisterPassword.addTextChangedListener(passwordWatcher)
         binding.inputRepeatPassword.addTextChangedListener(passwordWatcher)
+
+
         binding.btnRegister.setOnClickListener {
-            val name = binding.inputName.text.toString()
-            val email = binding.inputEmail.text.toString()
-            println(email)
-            val password = binding.inputPassword.text.toString()
+            val name = binding.edRegisterName.text.toString()
+            val email = binding.edRegisterEmail.text.toString()
+            val password = binding.edRegisterPassword.text.toString()
 
             viewModel.register(name, email, password).observe(this) {
                 handleResult(it)
@@ -84,41 +89,64 @@ class RegisterActivity : AppCompatActivity() {
     private fun handleResult(result: Result<Response>) {
         when (result) {
             is Result.Loading -> {
-                disableLoginForm()
-                binding.progressBar.alpha = 1f
+                disableRegisterForm()
+                binding.progressBar.visibility = View.VISIBLE
             }
 
             is Result.Error -> {
-                enableLoginForm()
-                binding.progressBar.alpha = 0f
+                enableRegisterForm()
+                binding.progressBar.visibility = View.GONE
                 showToast(result.error)
             }
 
             is Result.Success -> {
-                binding.progressBar.alpha = 0f
-                showToast("Register Success")
-                startActivity(Intent(this, LoginActivity::class.java))
-                finish()
+                val animatedCheck = binding.checkAnim.drawable as AnimatedVectorDrawable
+                animatedCheck.registerAnimationCallback(object : Animatable2.AnimationCallback(){
+                    override fun onAnimationEnd(drawable: Drawable?) {
+                        super.onAnimationEnd(drawable)
+                        startActivity(Intent(this@RegisterActivity, LoginActivity::class.java))
+                        finish()
+                    }
+                })
+
+                with(binding) {
+                    tvName.visibility = View.GONE
+                    tvEmail.visibility = View.GONE
+                    tvPassword.visibility = View.GONE
+                    tvRepeatPassword.visibility = View.GONE
+                    tvOther.visibility = View.GONE
+                    edRegisterName.visibility = View.GONE
+                    edRegisterEmail.visibility = View.GONE
+                    edRegisterPassword.visibility = View.GONE
+                    inputRepeatPassword.visibility = View.GONE
+                    btnRegister.visibility = View.GONE
+                    btnLogin.visibility = View.GONE
+                    progressBar.visibility = View.GONE
+                    checkAnim.visibility= View.VISIBLE
+                    registerSuccess.visibility= View.VISIBLE
+                }
+
+                animatedCheck.start()
             }
         }
     }
 
-    private fun disableLoginForm() {
+    private fun disableRegisterForm() {
         with(binding) {
-            inputName.isEnabled = false
-            inputEmail.isEnabled = false
-            inputPassword.isEnabled = false
+            edRegisterName.isEnabled = false
+            edRegisterEmail.isEnabled = false
+            edRegisterPassword.isEnabled = false
             inputRepeatPassword.isEnabled = false
             btnLogin.isEnabled = false
             btnRegister.isEnabled = false
         }
     }
 
-    private fun enableLoginForm() {
+    private fun enableRegisterForm() {
         with(binding) {
-            inputName.isEnabled = true
-            inputEmail.isEnabled = true
-            inputPassword.isEnabled = true
+            edRegisterName.isEnabled = true
+            edRegisterEmail.isEnabled = true
+            edRegisterPassword.isEnabled = true
             inputRepeatPassword.isEnabled = true
             btnLogin.isEnabled = true
             btnRegister.isEnabled = true
@@ -129,14 +157,14 @@ class RegisterActivity : AppCompatActivity() {
 
 
     private fun isRepeatPasswordSame() =
-        binding.inputPassword.text.toString() == binding.inputRepeatPassword.text.toString()
+        binding.edRegisterPassword.text.toString() == binding.inputRepeatPassword.text.toString()
 
     private fun setRegisterButtonEnabled() {
-        val result = with(binding.inputEmail) {
+        val result = with(binding.edRegisterEmail) {
             text?.isValidEmail() ?: false
-        } && with(binding.inputPassword) {
+        } && with(binding.edRegisterPassword) {
             text?.isValidPassword() ?: false
-        } && isRepeatPasswordSame() && !binding.inputName.text.isNullOrEmpty()
+        } && isRepeatPasswordSame() && !binding.edRegisterName.text.isNullOrEmpty()
 
         binding.btnRegister.isEnabled = result
     }

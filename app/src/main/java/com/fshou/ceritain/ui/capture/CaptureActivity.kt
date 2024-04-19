@@ -87,7 +87,6 @@ class CaptureActivity : AppCompatActivity(), ImageCapture.OnImageSavedCallback {
             }
         }
         if (!allPermissionsGranted()) {
-            // TODO: show error if is not Granted otherwise show cameraX
             requestCameraPermission.launch(REQUIRED_PERMISSION)
         }
 
