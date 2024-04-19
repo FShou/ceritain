@@ -50,9 +50,6 @@
             android:name=".ui.home.HomeActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.splash.SplashActivity"
-            android:exported="false" />
-        <activity
             android:name=".ui.onboarding.OnBoardingActivity"
             android:exported="true">
             <intent-filter>

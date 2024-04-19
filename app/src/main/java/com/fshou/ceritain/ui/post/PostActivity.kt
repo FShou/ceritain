@@ -1,13 +1,18 @@
 package com.fshou.ceritain.ui.post
 
 import android.content.Intent
+import android.graphics.drawable.Animatable2
+import android.graphics.drawable.AnimatedVectorDrawable
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.view.View
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -24,9 +29,7 @@ import com.fshou.ceritain.ui.factory.ViewModelFactory
 import com.fshou.ceritain.ui.home.HomeActivity
 import com.fshou.ceritain.uriToFile
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -51,60 +54,72 @@ class PostActivity : AppCompatActivity() {
         }
 
         binding.topAppBar.setNavigationOnClickListener { showExitAlert() }
+
         val imgUri = Uri.parse(intent.getStringExtra(CaptureActivity.EXTRA_IMG_URI))
         binding.postImage.load(imgUri) {
             crossfade(true)
             transformations(RoundedCornersTransformation(20f))
         }
 
-        binding.btnPost.setOnClickListener {
+        binding.buttonAdd.setOnClickListener {
             postStory(imgUri)
         }
+
+        binding.edAddDescription.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                setPostButtonEnabled()
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
+        setPostButtonEnabled()
+
         this.onBackPressedDispatcher.addCallback(this) {
-            // Show your dialog and handle navigation
             isEnabled = true
-//            println("is this is runni")
             showExitAlert()
         }
 
 
     }
 
+    private fun setPostButtonEnabled() {
+        with(binding) {
+            buttonAdd.isEnabled = !edAddDescription.text.isNullOrEmpty()
+        }
+    }
+
 
     private fun showExitAlert() {
-        MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_App_MaterialAlertDialog)
-            .setTitle("Are you sure ?")
-            .setMessage("This will not be saved")
-            .setPositiveButton("Continue") {_,_ ->
-                startActivity(
-                    Intent(
-                        this,
-                        HomeActivity::class.java
-                    ).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                )
-            }
-            .setNegativeButton("Cancel") {dialog,_ ->
-                dialog.dismiss()
-            }
+        MaterialAlertDialogBuilder(
+            this,
+            R.style.ThemeOverlay_App_MaterialAlertDialog
+        ).setTitle("Are you sure ?").setMessage("This will not be saved")
+            .setPositiveButton("Continue") { _, _ -> startIntentHome() }
+            .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
             .show()
+    }
+
+    private fun startIntentHome() {
+        val intent = Intent(this@PostActivity, HomeActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+
+        startActivity(intent)
     }
 
 
     private fun postStory(uri: Uri) {
-        with(binding) {
-            progressBar.alpha = 1f
-            btnPost.isEnabled = false
-            inputDescription.isEnabled = false
-        }
+        enablePostForm(false)
+        binding.progressBar.visibility = View.VISIBLE
+
         val imgFile = uriToFile(uri, this).reduceFileImage()
-        val description = binding.inputDescription.text.toString()
+        val description = binding.edAddDescription.text.toString()
 
         val requestBody = description.toRequestBody("text/plain".toMediaType())
         val requestImageFile = imgFile.asRequestBody("image/jpeg".toMediaType())
         val multipartBody = MultipartBody.Part.createFormData(
-            "photo",
-            imgFile.name,
-            requestImageFile
+            "photo", imgFile.name, requestImageFile
         )
         lifecycleScope.launch {
             viewModel.postStory(multipartBody, requestBody).observe(this@PostActivity) {
@@ -116,40 +131,53 @@ class PostActivity : AppCompatActivity() {
     private fun handleResult(result: Result<Response>) {
         when (result) {
             is Result.Loading -> {
-                with(binding) {
-                    progressBar.alpha = 1f
-                    btnPost.isEnabled = false
-                    inputDescription.isEnabled = false
-                }
+                enablePostForm(false)
             }
 
             is Result.Success -> {
-                with(binding) {
-                    progressBar.alpha = 0f
-                    btnPost.isEnabled = true
-                    inputDescription.isEnabled = true
-                }
-                runBlocking {
-                    Toast.makeText(this@PostActivity, "Post Success", Toast.LENGTH_SHORT).show()
-                    delay(2000)
-                }
-                startActivity(
-                    Intent(
-                        this,
-                        HomeActivity::class.java
-                    ).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                )
+                binding.progressBar.visibility = View.GONE
+                hidePostForm()
+                showSuccessAnim()
+
+                val animatedCheck = binding.checkAnim.drawable as AnimatedVectorDrawable
+                animatedCheck.registerAnimationCallback(object : Animatable2.AnimationCallback() {
+                    override fun onAnimationEnd(drawable: Drawable?) {
+                        super.onAnimationEnd(drawable)
+                        startIntentHome()
+                    }
+                })
+                animatedCheck.start()
             }
 
             is Result.Error -> {
-                with(binding) {
-                    progressBar.alpha = 0f
-                    btnPost.isEnabled = true
-                    inputDescription.isEnabled = true
-                }
-                Toast.makeText(this@PostActivity, result.error, Toast.LENGTH_SHORT).show()
+                binding.progressBar.visibility = View.GONE
+                enablePostForm(true)
+                Toast.makeText(this@PostActivity, result.error, Toast.LENGTH_LONG).show()
             }
 
         }
     }
+
+    private fun showSuccessAnim() {
+        with(binding) {
+            checkAnim.visibility = View.VISIBLE
+            postSuccess.visibility = View.VISIBLE
+        }
+    }
+
+    private fun hidePostForm() {
+        with(binding) {
+            postImage.visibility = View.GONE
+            edAddDescription.visibility = View.GONE
+            buttonAdd.visibility = View.GONE
+        }
+    }
+
+    private fun enablePostForm(isEnable: Boolean) {
+        with(binding) {
+            buttonAdd.isEnabled = isEnable
+            edAddDescription.isEnabled = isEnable
+        }
+    }
+
 }

@@ -67,12 +67,12 @@ class AppRepository private constructor(
         try {
             val response = apiService.getStories(token)
             response.listStory?.let {
-                emit(Result.Success(it as List<Story>))
+                emit(Result.Success(it))
             }
         } catch (e: HttpException) {
             val jsonBody = e.response()?.errorBody()?.string()
-            val errorBoody = Gson().fromJson(jsonBody, Response::class.java)
-            errorBoody.message?.let {
+            val errorBody = Gson().fromJson(jsonBody, Response::class.java)
+            errorBody.message?.let {
                 emit(Result.Error(it))
             }
         } catch (e: Exception) {
@@ -83,20 +83,19 @@ class AppRepository private constructor(
         }
     }
 
-    suspend fun postStory(
+    fun postStory(
         imgFile: MultipartBody.Part,
         description: RequestBody,
         token: String
     ): LiveData<Result<Response>> = liveData {
         emit(Result.Loading)
-        println("here is app repo")
         try {
             val response = apiService.postStory(imgFile, description, token)
             emit(Result.Success(response))
         }catch (e: HttpException) {
             val jsonBody = e.response()?.errorBody()?.string()
-            val errorBoody = Gson().fromJson(jsonBody, Response::class.java)
-            errorBoody.message?.let {
+            val errorBody = Gson().fromJson(jsonBody, Response::class.java)
+            errorBody.message?.let {
                 emit(Result.Error(it))
             }
         }catch (e: Exception) {
