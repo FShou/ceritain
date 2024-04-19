@@ -62,10 +62,10 @@ class AppRepository private constructor(
         }
     }
 
-    fun getStories(token: String): LiveData<Result<List<Story>>> = liveData {
+    fun getStories(): LiveData<Result<List<Story>>> = liveData {
         emit(Result.Loading)
         try {
-            val response = apiService.getStories(token)
+            val response = apiService.getStories()
             response.listStory?.let {
                 emit(Result.Success(it))
             }
@@ -86,11 +86,10 @@ class AppRepository private constructor(
     fun postStory(
         imgFile: MultipartBody.Part,
         description: RequestBody,
-        token: String
     ): LiveData<Result<Response>> = liveData {
         emit(Result.Loading)
         try {
-            val response = apiService.postStory(imgFile, description, token)
+            val response = apiService.postStory(imgFile, description)
             emit(Result.Success(response))
         }catch (e: HttpException) {
             val jsonBody = e.response()?.errorBody()?.string()
