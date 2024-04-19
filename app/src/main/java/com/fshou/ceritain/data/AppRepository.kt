@@ -18,7 +18,7 @@ class AppRepository private constructor(
     private val loginUserPreference: LoginUserPreference,
 ) {
 
-    fun getLoginUser() = loginUserPreference.getLoginUser()
+    suspend fun getLoginUser() = loginUserPreference.getLoginUser().first()
     suspend fun saveLoginUser(user: String) = loginUserPreference.saveLoginUser(user)
     suspend fun clearLoginUser() = loginUserPreference.clearLoginUser()
 
@@ -66,7 +66,7 @@ class AppRepository private constructor(
     fun getStories(): LiveData<Result<List<Story>>> = liveData {
         emit(Result.Loading)
         try {
-            val token = getLoginUser().first()
+            val token = getLoginUser()
             val response = apiService.getStories("Bearer $token")
             response.listStory?.let {
                 emit(Result.Success(it))
@@ -91,7 +91,7 @@ class AppRepository private constructor(
     ): LiveData<Result<Response>> = liveData {
         emit(Result.Loading)
         try {
-            val token = getLoginUser().first()
+            val token = getLoginUser()
             val response = apiService.postStory(imgFile, description, "Bearer $token")
             emit(Result.Success(response))
         }catch (e: HttpException) {

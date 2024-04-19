@@ -8,11 +8,15 @@ import android.view.WindowManager
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import com.fshou.ceritain.databinding.ActivityOnBoardingBinding
 import com.fshou.ceritain.ui.factory.ViewModelFactory
 import com.fshou.ceritain.ui.home.HomeActivity
 import com.fshou.ceritain.ui.login.LoginActivity
 import com.fshou.ceritain.ui.register.RegisterActivity
+import kotlinx.coroutines.launch
 
 class OnBoardingActivity : AppCompatActivity() {
 
@@ -27,29 +31,29 @@ class OnBoardingActivity : AppCompatActivity() {
         binding = ActivityOnBoardingBinding.inflate(layoutInflater)
         enableEdgeToEdge()
         setContentView(binding.root)
-//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-//            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-//            v.setPadding(systemBars.left, 0, systemBars.right, systemBars.bottom)
-//            insets
-//        }
+        ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, 0, systemBars.right, systemBars.bottom)
+            insets
+        }
         setupView()
 
         binding.btnLogin.setOnClickListener {
             startActivity(Intent(this,LoginActivity::class.java))
             finish()
         }
-
         binding.btnRegister.setOnClickListener {
             startActivity(Intent(this,RegisterActivity::class.java))
             finish()
         }
 
-        viewModel.pref.observe(this) {
-            it?.let {
-                startActivity(Intent(this,HomeActivity::class.java))
+        lifecycleScope.launch {
+            if (viewModel.getLoginUser() != null) {
+                startActivity(Intent(this@OnBoardingActivity,HomeActivity::class.java))
                 finish()
             }
         }
+
     }
 
     private fun setupView() {

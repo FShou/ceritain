@@ -26,10 +26,8 @@ class StoryAdapter(val story: List<Story>) :
     inner class StoryViewHolder(private val binding: StoryItemLayoutBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-
         fun bind(story: Story) {
             binding.root.setOnClickListener {
-
                 val optionsCompat: ActivityOptionsCompat =
                     ActivityOptionsCompat.makeSceneTransitionAnimation(
                         binding.root.context as Activity,

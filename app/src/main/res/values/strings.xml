@@ -20,4 +20,9 @@
     <string name="preview_image">Preview Image</string>
     <string name="post">Post</string>
     <string name="an_error_occured">An Error Occurred !!,\n Swipe down to refresh</string>
+    <string name="no_story_found">No Story Found yet, Post a Story</string>
+    <string name="post_a_story">Post a Story</string>
+    <string name="are_you_sure">Are you sure ?</string>
+    <string name="confirm_to_log_out">Confirm to Log Out</string>
+    <string name="cancel">Cancel</string>
 </resources>

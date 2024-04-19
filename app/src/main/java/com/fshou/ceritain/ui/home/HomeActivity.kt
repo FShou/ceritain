@@ -2,6 +2,7 @@ package com.fshou.ceritain.ui.home
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -34,8 +35,9 @@ class HomeActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+
         binding = ActivityHomeBinding.inflate(layoutInflater)
+        enableEdgeToEdge()
         setContentView(binding.root)
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -60,7 +62,7 @@ class HomeActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
         binding.topAppBar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.action_logout -> {
-                    showExitAlert()
+                    showLogoutAlert()
                     true
                 }
 
@@ -71,11 +73,11 @@ class HomeActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
 
     }
 
-    private fun showExitAlert() {
+    private fun showLogoutAlert() {
         MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_App_MaterialAlertDialog)
-            .setTitle("Are you sure ?")
-            .setMessage("Confirm to Log Out")
-            .setPositiveButton("Log out") {_,_ ->
+            .setTitle(getString(R.string.are_you_sure))
+            .setMessage(getString(R.string.confirm_to_log_out))
+            .setPositiveButton(getText(R.string.log_out)) { _,_ ->
                 viewModel.clearLoginUser()
                 startActivity(
                     Intent(
@@ -84,7 +86,7 @@ class HomeActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
                     ).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                 )
             }
-            .setNegativeButton("Cancel") {dialog,_ ->
+            .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
                 dialog.dismiss()
             }
             .show()
@@ -94,7 +96,7 @@ class HomeActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
     private fun handleResult(result: Result<List<Story>>) {
         when (result) {
             is Result.Loading -> {
-                binding.tvError.alpha = 0f
+                binding.tvError.visibility = View.GONE
                 binding.swipeRefresh.isRefreshing = true
             }
 
@@ -104,7 +106,7 @@ class HomeActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
             }
 
             is Result.Error -> {
-                binding.tvError.alpha = 1f
+                binding.tvError.visibility = View.VISIBLE
                 showToast(result.error)
                 binding.swipeRefresh.isRefreshing = false
             }
@@ -115,7 +117,8 @@ class HomeActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
     private fun showToast(msg: String) = Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     private fun showStories(stories: List<Story>) {
         if (stories.isEmpty()) {
-            binding.tvError.text = "No Story Found yet, Post a Story"
+            binding.tvError.text = getString(R.string.no_story_found)
+            binding.tvError.visibility = View.VISIBLE
             return
         }
 

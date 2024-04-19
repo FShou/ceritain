@@ -21,33 +21,37 @@ class DetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDetailBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         binding = ActivityDetailBinding.inflate(layoutInflater)
+        enableEdgeToEdge()
         setContentView(binding.root)
-        val story = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra(EXTRA_STORY, Story::class.java) as Story
-        } else {
-            intent.getParcelableExtra(EXTRA_STORY)!!
-        }
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-        binding.ivDetailPhoto.load(story.photoUrl) {
-            crossfade(true)
-            transformations(RoundedCornersTransformation(16f))
+
+        val story = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra(EXTRA_STORY, Story::class.java) as Story
+        } else {
+            intent.getParcelableExtra(EXTRA_STORY)!!
         }
-        binding.topAppBar.setNavigationOnClickListener { finishAfterTransition() }
         val parsedCreated = Instant.parse(story.createdAt)
         val createdAtZonedTime = ZonedDateTime.ofInstant(parsedCreated, ZoneId.systemDefault())
         val createdAtLocalFormat =
             createdAtZonedTime.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM))
+
+
         with(binding) {
             tvDetailName.text = story.name
             tvDetailDescription.text = story.description
             createdAt.text = createdAtLocalFormat
+            ivDetailPhoto.load(story.photoUrl) {
+                crossfade(true)
+                transformations(RoundedCornersTransformation(16f))
+            }
+
+            topAppBar.setNavigationOnClickListener { finishAfterTransition() }
         }
 
     }
