@@ -63,25 +63,28 @@ class RegisterActivity : AppCompatActivity() {
         }
         setupView()
 
-        binding.edRegisterName.addTextChangedListener(validationWatcher)
-        binding.edRegisterEmail.addTextChangedListener(validationWatcher)
-        binding.edRegisterPassword.addTextChangedListener(passwordWatcher)
-        binding.inputRepeatPassword.addTextChangedListener(passwordWatcher)
+        with(binding) {
 
+            btnRegister.setOnClickListener {
+                val name = binding.edRegisterName.text.toString()
+                val email = binding.edRegisterEmail.text.toString()
+                val password = binding.edRegisterPassword.text.toString()
 
-        binding.btnRegister.setOnClickListener {
-            val name = binding.edRegisterName.text.toString()
-            val email = binding.edRegisterEmail.text.toString()
-            val password = binding.edRegisterPassword.text.toString()
+                viewModel.register(name, email, password).observe(this@RegisterActivity) {
+                    handleResult(it)
+                }
 
-            viewModel.register(name, email, password).observe(this) {
-                handleResult(it)
             }
 
-        }
-        binding.btnLogin.setOnClickListener {
-            startActivity(Intent(this, LoginActivity::class.java))
-            finish()
+            btnLogin.setOnClickListener {
+                startActivity(Intent(this@RegisterActivity, LoginActivity::class.java))
+                finish()
+            }
+
+            edRegisterName.addTextChangedListener(validationWatcher)
+            edRegisterEmail.addTextChangedListener(validationWatcher)
+            edRegisterPassword.addTextChangedListener(passwordWatcher)
+            inputRepeatPassword.addTextChangedListener(passwordWatcher)
         }
 
     }
@@ -89,84 +92,101 @@ class RegisterActivity : AppCompatActivity() {
     private fun handleResult(result: Result<Response>) {
         when (result) {
             is Result.Loading -> {
-                disableRegisterForm()
+                enableRegisterForm(false)
                 binding.progressBar.visibility = View.VISIBLE
             }
 
             is Result.Error -> {
-                enableRegisterForm()
+                enableRegisterForm(true)
                 binding.progressBar.visibility = View.GONE
-                showToast(result.error)
+                handleErrorMsg(result.error)
             }
 
             is Result.Success -> {
-                val animatedCheck = binding.checkAnim.drawable as AnimatedVectorDrawable
-                animatedCheck.registerAnimationCallback(object : Animatable2.AnimationCallback(){
-                    override fun onAnimationEnd(drawable: Drawable?) {
-                        super.onAnimationEnd(drawable)
-                        startActivity(Intent(this@RegisterActivity, LoginActivity::class.java))
-                        finish()
-                    }
-                })
-
-                with(binding) {
-                    tvName.visibility = View.GONE
-                    tvEmail.visibility = View.GONE
-                    tvPassword.visibility = View.GONE
-                    tvRepeatPassword.visibility = View.GONE
-                    tvOther.visibility = View.GONE
-                    edRegisterName.visibility = View.GONE
-                    edRegisterEmail.visibility = View.GONE
-                    edRegisterPassword.visibility = View.GONE
-                    inputRepeatPassword.visibility = View.GONE
-                    btnRegister.visibility = View.GONE
-                    btnLogin.visibility = View.GONE
-                    progressBar.visibility = View.GONE
-                    checkAnim.visibility= View.VISIBLE
-                    registerSuccess.visibility= View.VISIBLE
-                }
-
-                animatedCheck.start()
+                hideRegisterForm()
+                showSuccessAnimation()
             }
         }
     }
 
-    private fun disableRegisterForm() {
+    private fun handleErrorMsg(msg: String) {
+        when {
+            msg.contains("Email") -> {
+                binding.edRegisterEmail.apply {
+                    error = msg
+                    requestFocus()
+                    setSelection(text?.length ?: 0)
+                }
+            }
+            msg.isNotEmpty() -> {
+                showToast(msg)
+            }
+        }
+        setRegisterButtonEnabled()
+    }
+
+    private fun showSuccessAnimation() {
+        val animatedCheck = binding.checkAnim.drawable as AnimatedVectorDrawable
+        animatedCheck.registerAnimationCallback(object : Animatable2.AnimationCallback() {
+            override fun onAnimationEnd(drawable: Drawable?) {
+                super.onAnimationEnd(drawable)
+                startActivity(Intent(this@RegisterActivity, LoginActivity::class.java))
+                finish()
+            }
+        })
         with(binding) {
-            edRegisterName.isEnabled = false
-            edRegisterEmail.isEnabled = false
-            edRegisterPassword.isEnabled = false
-            inputRepeatPassword.isEnabled = false
-            btnLogin.isEnabled = false
-            btnRegister.isEnabled = false
+            checkAnim.visibility = View.VISIBLE
+            registerSuccess.visibility = View.VISIBLE
+        }
+        animatedCheck.start()
+
+    }
+
+    private fun hideRegisterForm() {
+        with(binding) {
+            tvName.visibility = View.GONE
+            tvEmail.visibility = View.GONE
+            tvPassword.visibility = View.GONE
+            tvRepeatPassword.visibility = View.GONE
+            tvOther.visibility = View.GONE
+            edRegisterName.visibility = View.GONE
+            edRegisterEmail.visibility = View.GONE
+            edRegisterPassword.visibility = View.GONE
+            inputRepeatPassword.visibility = View.GONE
+            btnRegister.visibility = View.GONE
+            btnLogin.visibility = View.GONE
+            progressBar.visibility = View.GONE
         }
     }
 
-    private fun enableRegisterForm() {
+    private fun enableRegisterForm(isEnabled: Boolean) {
         with(binding) {
-            edRegisterName.isEnabled = true
-            edRegisterEmail.isEnabled = true
-            edRegisterPassword.isEnabled = true
-            inputRepeatPassword.isEnabled = true
-            btnLogin.isEnabled = true
-            btnRegister.isEnabled = true
+            edRegisterName.isEnabled = isEnabled
+            edRegisterEmail.isEnabled = isEnabled
+            edRegisterPassword.isEnabled = isEnabled
+            inputRepeatPassword.isEnabled = isEnabled
+            btnLogin.isEnabled = isEnabled
+            btnRegister.isEnabled = isEnabled
         }
     }
 
-    private fun showToast(msg: String) = Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+    private fun showToast(msg: String) =
+        Toast.makeText(this@RegisterActivity, msg, Toast.LENGTH_LONG).show()
 
 
     private fun isRepeatPasswordSame() =
         binding.edRegisterPassword.text.toString() == binding.inputRepeatPassword.text.toString()
 
     private fun setRegisterButtonEnabled() {
-        val result = with(binding.edRegisterEmail) {
-            text?.isValidEmail() ?: false
-        } && with(binding.edRegisterPassword) {
-            text?.isValidPassword() ?: false
-        } && isRepeatPasswordSame() && !binding.edRegisterName.text.isNullOrEmpty()
+        with(binding) {
+            val result =
+                (!edRegisterName.text.isNullOrEmpty() && edRegisterName.error.isNullOrEmpty()) &&
+                        (!edRegisterEmail.text.isNullOrEmpty() && edRegisterEmail.error.isNullOrEmpty()) &&
+                        (!edRegisterPassword.text.isNullOrEmpty() && edRegisterPassword.error.isNullOrEmpty()) &&
+                        (!inputRepeatPassword.text.isNullOrEmpty() && inputRepeatPassword.error.isNullOrEmpty())
 
-        binding.btnRegister.isEnabled = result
+            btnRegister.isEnabled = result
+        }
     }
 
     private fun setupView() {
