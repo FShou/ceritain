@@ -19,7 +19,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.fshou.ceritain.R
 import com.fshou.ceritain.data.Result
-import com.fshou.ceritain.data.remote.response.Response
+import com.fshou.ceritain.data.remote.response.BaseResponse
 import com.fshou.ceritain.databinding.ActivityRegisterBinding
 import com.fshou.ceritain.ui.factory.ViewModelFactory
 import com.fshou.ceritain.ui.login.LoginActivity
@@ -89,7 +89,7 @@ class RegisterActivity : AppCompatActivity() {
 
     }
 
-    private fun handleResult(result: Result<Response>) {
+    private fun handleResult(result: Result<BaseResponse>) {
         when (result) {
             is Result.Loading -> {
                 enableRegisterForm(false)

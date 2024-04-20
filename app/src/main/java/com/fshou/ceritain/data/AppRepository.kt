@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import com.fshou.ceritain.data.local.datastore.LoginUserPreference
 import com.fshou.ceritain.data.remote.response.LoginResult
-import com.fshou.ceritain.data.remote.response.Response
+import com.fshou.ceritain.data.remote.response.BaseResponse
 import com.fshou.ceritain.data.remote.response.Story
 import com.fshou.ceritain.data.remote.retrofit.ApiService
 import com.google.gson.Gson
@@ -22,7 +22,7 @@ class AppRepository private constructor(
     suspend fun saveLoginUser(user: String) = loginUserPreference.saveLoginUser(user)
     suspend fun clearLoginUser() = loginUserPreference.clearLoginUser()
 
-    fun register(name: String, email: String, password: String): LiveData<Result<Response>> =
+    fun register(name: String, email: String, password: String): LiveData<Result<BaseResponse>> =
         liveData {
             emit(Result.Loading)
             try {
@@ -30,7 +30,7 @@ class AppRepository private constructor(
                 emit(Result.Success(response))
             } catch (e: HttpException) {
                 val jsonBody = e.response()?.errorBody()?.string()
-                val errorBody = Gson().fromJson(jsonBody, Response::class.java)
+                val errorBody = Gson().fromJson(jsonBody, BaseResponse::class.java)
                 errorBody.message?.let {
                     emit(Result.Error(it))
                 }
@@ -51,7 +51,7 @@ class AppRepository private constructor(
             }
         } catch (e: HttpException) {
             val jsonBody = e.response()?.errorBody()?.string()
-            val errorBody = Gson().fromJson(jsonBody, Response::class.java)
+            val errorBody = Gson().fromJson(jsonBody, BaseResponse::class.java)
             errorBody.message?.let {
                 emit(Result.Error(it))
             }
@@ -73,7 +73,7 @@ class AppRepository private constructor(
             }
         } catch (e: HttpException) {
             val jsonBody = e.response()?.errorBody()?.string()
-            val errorBody = Gson().fromJson(jsonBody, Response::class.java)
+            val errorBody = Gson().fromJson(jsonBody, BaseResponse::class.java)
             errorBody.message?.let {
                 emit(Result.Error(it))
             }
@@ -88,7 +88,7 @@ class AppRepository private constructor(
     fun postStory(
         imgFile: MultipartBody.Part,
         description: RequestBody,
-    ): LiveData<Result<Response>> = liveData {
+    ): LiveData<Result<BaseResponse>> = liveData {
         emit(Result.Loading)
         try {
             val token = getLoginUser()
@@ -96,7 +96,7 @@ class AppRepository private constructor(
             emit(Result.Success(response))
         }catch (e: HttpException) {
             val jsonBody = e.response()?.errorBody()?.string()
-            val errorBody = Gson().fromJson(jsonBody, Response::class.java)
+            val errorBody = Gson().fromJson(jsonBody, BaseResponse::class.java)
             errorBody.message?.let {
                 emit(Result.Error(it))
             }

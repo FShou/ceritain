@@ -21,6 +21,11 @@ class EditText : AppCompatEditText, View.OnTouchListener {
 
     private lateinit var actionButtonIcon: Drawable
     private lateinit var bgEditText: Drawable
+    private lateinit var bgEditTextFocus: Drawable
+    private lateinit var bgEditTextError: Drawable
+    private lateinit var eye: Drawable
+    private lateinit var eyeOff: Drawable
+    private lateinit var close: Drawable
     private lateinit var type: Typeface
     private var textColor: Int = 0
     private var highlight: Int = 0
@@ -60,30 +65,16 @@ class EditText : AppCompatEditText, View.OnTouchListener {
             InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD, InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD -> {
                 showActionIcon()
             }
+
             else -> {}
         }
-        when{
-            !isFocused && error.isNullOrEmpty() -> {
-                bgEditText =
-                    ContextCompat.getDrawable(context, R.drawable.bg_edit_text) as Drawable
-                background = bgEditText
-            }
-            isFocused && error.isNullOrEmpty()  ->{
-                bgEditText =
-                    ContextCompat.getDrawable(context, R.drawable.bg_editext_focused) as Drawable
-                background = bgEditText
-            }
-             !error.isNullOrEmpty() -> {
-                bgEditText =
-                    ContextCompat.getDrawable(context, R.drawable.bg_edittext_error) as Drawable
-                background = bgEditText
-            }
+        when {
+            !isFocused && error.isNullOrEmpty() -> background = bgEditText
+            isFocused && error.isNullOrEmpty() -> background = bgEditTextFocus
+            !error.isNullOrEmpty() -> background = bgEditTextError
         }
-        alpha = if (!isEnabled) {
-            0.6f
-        }else{
-            1f
-        }
+        alpha = if (isEnabled) 1f else 0.6f
+
     }
 
     private fun init() {
@@ -91,20 +82,24 @@ class EditText : AppCompatEditText, View.OnTouchListener {
         highlight = ContextCompat.getColor(context, R.color.emerald_200)
         hintText = ContextCompat.getColor(context, R.color.grey_hint)
         bgEditText = ContextCompat.getDrawable(context, R.drawable.bg_edit_text) as Drawable
+        bgEditTextFocus =
+            ContextCompat.getDrawable(context, R.drawable.bg_editext_focused) as Drawable
+        bgEditTextError =
+            ContextCompat.getDrawable(context, R.drawable.bg_edittext_error) as Drawable
+        eye = ContextCompat.getDrawable(context, R.drawable.eye) as Drawable
+        eyeOff = ContextCompat.getDrawable(context, R.drawable.eye_off) as Drawable
+        close = ContextCompat.getDrawable(context, R.drawable.close) as Drawable
         type = resources.getFont(R.font.plus_jakarta_sans_medium)
         setActionIcon()
 
         setOnTouchListener(this)
         addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
-
-            }
-
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 when (inputType) {
                     InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS or InputType.TYPE_CLASS_TEXT -> {
                         if (!s.isValidEmail()) {
-                            setError("Invalid Email Address", null)
+                            setError(context.getString(R.string.invalid_email_address), null)
                         } else {
                             setError(null, null)
                         }
@@ -113,7 +108,10 @@ class EditText : AppCompatEditText, View.OnTouchListener {
 
                     InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD, InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD -> {
                         if (!s.isValidPassword()) {
-                            setError("Password must have minimum of 8 Characters", null)
+                            setError(
+                                context.getString(R.string.password_must_have_minimum_of_8_characters),
+                                null
+                            )
                         } else {
                             setError(null, null)
                         }
@@ -121,7 +119,7 @@ class EditText : AppCompatEditText, View.OnTouchListener {
 
                     else -> {
                         if (s.isEmpty()) {
-                            setError("This Cannot be empty", null)
+                            setError(context.getString(R.string.this_cannot_be_empty), null)
                             hideActionIcon()
                         } else {
                             setError(null, null)
@@ -132,10 +130,7 @@ class EditText : AppCompatEditText, View.OnTouchListener {
 
             }
 
-            override fun afterTextChanged(s: Editable) {
-
-
-            }
+            override fun afterTextChanged(s: Editable) {}
         })
     }
 
@@ -165,75 +160,65 @@ class EditText : AppCompatEditText, View.OnTouchListener {
     }
 
     override fun onTouch(v: View?, event: MotionEvent): Boolean {
-        if (compoundDrawables[2] != null) {
-            val clearButtonStart: Float
-            val clearButtonEnd: Float
-            var isClearButtonClicked = false
-            if (layoutDirection == View.LAYOUT_DIRECTION_RTL) {
-                clearButtonEnd = (actionButtonIcon.intrinsicWidth + paddingStart).toFloat()
-                when {
-                    event.x < clearButtonEnd -> isClearButtonClicked = true
-                }
-            } else {
-                clearButtonStart = (width - paddingEnd - actionButtonIcon.intrinsicWidth).toFloat()
-                when {
-                    event.x > clearButtonStart -> isClearButtonClicked = true
-                }
+        if (compoundDrawables[2] == null) return false
+        val clearButtonStart: Float
+        val clearButtonEnd: Float
+        var isClearButtonClicked = false
+        if (layoutDirection == View.LAYOUT_DIRECTION_RTL) {
+            clearButtonEnd = (actionButtonIcon.intrinsicWidth + paddingStart).toFloat()
+            when {
+                event.x < clearButtonEnd -> isClearButtonClicked = true
             }
-            if (isClearButtonClicked) {
-                when (event.action) {
-                    MotionEvent.ACTION_DOWN -> {
+        } else {
+            clearButtonStart = (width - paddingEnd - actionButtonIcon.intrinsicWidth).toFloat()
+            when {
+                event.x > clearButtonStart -> isClearButtonClicked = true
+            }
+        }
+        if (!isClearButtonClicked) return false
+
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                setActionIcon()
+                showActionIcon()
+                return true
+            }
+
+            MotionEvent.ACTION_UP -> {
+                when (inputType) {
+                    InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD -> {
+                        hideActionIcon()
+                        inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
                         setActionIcon()
                         showActionIcon()
-                        return true
                     }
 
-                    MotionEvent.ACTION_UP -> {
-                        when (inputType) {
-                            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD -> {
-                                hideActionIcon()
-                                inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
-                                setActionIcon()
-                                showActionIcon()
-                            }
-
-                            InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD -> {
-                                hideActionIcon()
-                                inputType =
-                                    InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-                                setActionIcon()
-                                showActionIcon()
-                            }
-
-                            else -> {
-                                setActionIcon()
-                                text?.clear()
-                                hideActionIcon()
-                            }
-                        }
-                        return true
+                    InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD -> {
+                        hideActionIcon()
+                        inputType =
+                            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                        setActionIcon()
+                        showActionIcon()
                     }
 
-                    else -> return false
+                    else -> {
+                        setActionIcon()
+                        text?.clear()
+                        hideActionIcon()
+                    }
                 }
-            } else return false
+                return true
+            }
+
+            else -> return false
         }
-        return false
     }
 
     private fun setActionIcon() {
         actionButtonIcon = when (inputType) {
-            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD -> ContextCompat.getDrawable(
-                context, R.drawable.eye
-            ) as Drawable
-
-            InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD -> ContextCompat.getDrawable(
-                context, R.drawable.eye_off
-            ) as Drawable
-
-            else -> ContextCompat.getDrawable(
-                context, R.drawable.close
-            ) as Drawable
+            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD -> eye
+            InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD -> eyeOff
+            else -> close
         }
     }
 

@@ -29,4 +29,9 @@
     <string name="failed_to_capture">Failed to capture</string>
     <string name="permission_request_denied">Permission request denied</string>
     <string name="no_media_selected">No Media selected</string>
+    <string name="this_will_not_be_saved">This will not be saved</string>
+    <string name="continu">Continue</string>
+    <string name="invalid_email_address">Invalid Email Address</string>
+    <string name="password_must_have_minimum_of_8_characters">Password must have minimum of 8 Characters</string>
+    <string name="this_cannot_be_empty">This Cannot be empty</string>
 </resources>

@@ -20,6 +20,7 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import coil.load
 import coil.transform.RoundedCornersTransformation
@@ -77,6 +78,8 @@ class CaptureActivity : AppCompatActivity(), ImageCapture.OnImageSavedCallback {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        WindowCompat.getInsetsController(window,binding.root).isAppearanceLightStatusBars = true
+
 
 
         with(binding) {
