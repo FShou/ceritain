@@ -30,6 +30,8 @@ import com.fshou.ceritain.ui.factory.ViewModelFactory
 import com.fshou.ceritain.ui.home.HomeActivity
 import com.fshou.ceritain.uriToFile
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
@@ -59,7 +61,9 @@ class PostActivity : AppCompatActivity() {
         val imgUri = Uri.parse(intent.getStringExtra(CaptureActivity.EXTRA_IMG_URI))
         with(binding){
             topAppBar.setNavigationOnClickListener { showExitAlert() }
-            buttonAdd.setOnClickListener { postStory(imgUri) }
+            buttonAdd.setOnClickListener {
+                postStory(imgUri)
+            }
             postImage.load(imgUri) {
                 crossfade(true)
                 transformations(RoundedCornersTransformation(20f))
@@ -106,27 +110,32 @@ class PostActivity : AppCompatActivity() {
 
 
     private fun postStory(uri: Uri) {
-        enablePostForm(false)
         binding.progressBar.visibility = View.VISIBLE
+        enablePostForm(false)
 
-        val imgFile = uriToFile(uri, this).reduceFileImage()
-        val description = binding.edAddDescription.text.toString()
+        CoroutineScope(Dispatchers.IO).launch {
+            val imgFile = uriToFile(uri, this@PostActivity).reduceFileImage()
+            val description = binding.edAddDescription.text.toString()
 
-        val requestBody = description.toRequestBody("text/plain".toMediaType())
-        val requestImageFile = imgFile.asRequestBody("image/jpeg".toMediaType())
-        val multipartBody = MultipartBody.Part.createFormData(
-            "photo", imgFile.name, requestImageFile
-        )
-        lifecycleScope.launch {
-            viewModel.postStory(multipartBody, requestBody).observe(this@PostActivity) {
-                handleResult(it)
+            val requestBody = description.toRequestBody("text/plain".toMediaType())
+            val requestImageFile = imgFile.asRequestBody("image/jpeg".toMediaType())
+            val multipartBody = MultipartBody.Part.createFormData(
+                "photo", imgFile.name, requestImageFile
+            )
+
+            lifecycleScope.launch {
+                viewModel.postStory(multipartBody, requestBody).observe(this@PostActivity) {
+                    handleResult(it)
+                }
             }
         }
+
     }
 
     private fun handleResult(result: Result<BaseResponse>) {
         when (result) {
             is Result.Loading -> {
+                binding.progressBar.visibility = View.VISIBLE
                 enablePostForm(false)
             }
 
