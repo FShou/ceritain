@@ -3,7 +3,7 @@ package com.fshou.ceritain.ui.onboarding
 import androidx.lifecycle.ViewModel
 import com.fshou.ceritain.data.AppRepository
 
-class OnBoardingViewModel(val appRepository: AppRepository): ViewModel() {
+class OnBoardingViewModel(private val appRepository: AppRepository): ViewModel() {
 
 
 

@@ -23,6 +23,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import coil.load
 import coil.transform.RoundedCornersTransformation
+import com.fshou.ceritain.R
 import com.fshou.ceritain.createCustomTempFile
 import com.fshou.ceritain.databinding.ActivityCaptureBinding
 import com.fshou.ceritain.ui.post.PostActivity
@@ -51,21 +52,18 @@ class CaptureActivity : AppCompatActivity(), ImageCapture.OnImageSavedCallback {
         ActivityResultContracts.PickVisualMedia()
     ) { uri: Uri? ->
         if (uri != null) {
-            // permission to read uri in other activity
             contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
             viewModel.setCurrentImageUri(uri)
         } else {
-            Toast.makeText(this, "No Media selected", Toast.LENGTH_SHORT).show()
+            showToast(getString(R.string.no_media_selected))
         }
     }
 
     private fun handlePermissionGranted(isGranted: Boolean) {
-        // TODO: show error if is not Granted otherwise show cameraX
         if (isGranted) {
             startCamera()
-            Toast.makeText(this, "Permission request granted", Toast.LENGTH_LONG).show()
         } else {
-            Toast.makeText(this, "Permission request denied", Toast.LENGTH_LONG).show()
+            showToast(getString(R.string.permission_request_denied))
         }
     }
 
@@ -79,50 +77,52 @@ class CaptureActivity : AppCompatActivity(), ImageCapture.OnImageSavedCallback {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        binding.topAppBar.setNavigationOnClickListener { finishAfterTransition() }
+
+
+        with(binding) {
+            topAppBar.setNavigationOnClickListener { finishAfterTransition() }
+            gallery.setOnClickListener {
+                launcherGallery.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            }
+        }
+
+        if (!allPermissionsGranted()) {
+            requestCameraPermission.launch(REQUIRED_PERMISSION)
+            return
+        }
+
+
+        with(binding) {
+            switchCamera.setOnClickListener {
+                cameraSelector = if (cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA)
+                    CameraSelector.DEFAULT_FRONT_CAMERA
+                else CameraSelector.DEFAULT_BACK_CAMERA
+
+                startCamera()
+            }
+            capture.setOnClickListener {
+                takePhoto()
+            }
+
+            chooseImg.setOnClickListener {
+                val intent = Intent(this@CaptureActivity, PostActivity::class.java)
+                intent.putExtra(EXTRA_IMG_URI, viewModel.currentImageUri.value.toString())
+                startActivity(intent)
+                finish()
+            }
+
+            clearImage.setOnClickListener {
+                viewModel.setCurrentImageUri(null)
+                showCameraAction()
+                startCamera()
+            }
+
+        }
+        startCamera()
         viewModel.currentImageUri.observe(this) {
             if (it != null) {
                 showPreviewImage(it)
                 showConfirmationAction()
-            }
-        }
-        if (!allPermissionsGranted()) {
-            requestCameraPermission.launch(REQUIRED_PERMISSION)
-        }
-
-        binding.gallery.setOnClickListener {
-            launcherGallery.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-        }
-
-        if (allPermissionsGranted()) {
-            startCamera()
-
-            binding.switchCamera.setOnClickListener {
-                cameraSelector =
-                    if (cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA) CameraSelector.DEFAULT_FRONT_CAMERA
-                    else CameraSelector.DEFAULT_BACK_CAMERA
-
-                startCamera()
-            }
-            binding.capture.setOnClickListener {
-                takePhoto()
-            }
-
-            binding.chooseImg.setOnClickListener {
-                startActivity(
-                    Intent(this@CaptureActivity, PostActivity::class.java)
-                        .putExtra(
-                            EXTRA_IMG_URI,
-                            viewModel.currentImageUri.value.toString()
-                        )
-                )
-                finish()
-            }
-
-            binding.clearImage.setOnClickListener {
-                viewModel.setCurrentImageUri(null)
-                showCameraAction()
-                startCamera()
             }
         }
     }
@@ -163,27 +163,19 @@ class CaptureActivity : AppCompatActivity(), ImageCapture.OnImageSavedCallback {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(application)
         val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
         cameraProviderFuture.addListener({
-            val preview = Preview.Builder()
-                .build()
-                .also {
-                    it.setSurfaceProvider(binding.viewFinder.surfaceProvider)
-                }
+            val preview = Preview.Builder().build()
             imageCapture = ImageCapture.Builder().build()
-
+            preview.setSurfaceProvider(binding.viewFinder.surfaceProvider)
             try {
                 cameraProvider.unbindAll()
                 cameraProvider.bindToLifecycle(
-                    this,
+                    this@CaptureActivity,
                     cameraSelector,
                     preview,
                     imageCapture
                 )
             } catch (exc: Exception) {
-                Toast.makeText(
-                    this@CaptureActivity,
-                    "Gagal memunculkan kamera.",
-                    Toast.LENGTH_SHORT
-                ).show()
+                showToast(getString(R.string.failed_to_show_camera))
                 Log.e(TAG, "startCamera: ${exc.message}")
             }
         }, ContextCompat.getMainExecutor(this))
@@ -196,35 +188,29 @@ class CaptureActivity : AppCompatActivity(), ImageCapture.OnImageSavedCallback {
         imageCapture.takePicture(
             outputOptions,
             ContextCompat.getMainExecutor(this),
-            this
+            this@CaptureActivity
         )
     }
 
 
     override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-        Toast.makeText(
-            this@CaptureActivity,
-            "Berhasil mengambil gambar.",
-            Toast.LENGTH_SHORT
-        ).show()
         outputFileResults.savedUri?.let { viewModel.setCurrentImageUri(it) }
     }
 
     override fun onError(exception: ImageCaptureException) {
-        Toast.makeText(
-            this@CaptureActivity,
-            "Gagal mengambil gambar.",
-            Toast.LENGTH_SHORT
-        ).show()
-        Log.e(TAG, "onError: ${exception.message}")
+        showToast(getString(R.string.failed_to_capture))
     }
+
+    private fun showToast(msg: String) =
+        Toast.makeText(this@CaptureActivity, msg, Toast.LENGTH_LONG).show()
+
 
     override fun onDestroy() {
         super.onDestroy()
         val cameraProviderFuture = ProcessCameraProvider.getInstance(application)
         val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
         cameraProvider.unbindAll()
-
+        imageCapture = null
     }
 
     companion object {

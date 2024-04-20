@@ -25,4 +25,8 @@
     <string name="are_you_sure">Are you sure ?</string>
     <string name="confirm_to_log_out">Confirm to Log Out</string>
     <string name="cancel">Cancel</string>
+    <string name="failed_to_show_camera">Failed to show camera</string>
+    <string name="failed_to_capture">Failed to capture</string>
+    <string name="permission_request_denied">Permission request denied</string>
+    <string name="no_media_selected">No Media selected</string>
 </resources>
