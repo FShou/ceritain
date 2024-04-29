@@ -7,6 +7,7 @@ import com.fshou.ceritain.data.AppRepository
 import com.fshou.ceritain.data.di.Injection
 import com.fshou.ceritain.ui.home.HomeViewModel
 import com.fshou.ceritain.ui.login.LoginViewModel
+import com.fshou.ceritain.ui.maps.MapsViewModel
 import com.fshou.ceritain.ui.onboarding.OnBoardingViewModel
 import com.fshou.ceritain.ui.post.PostViewModel
 import com.fshou.ceritain.ui.register.RegisterViewModel
@@ -31,6 +32,10 @@ class ViewModelFactory private constructor(
                 appRepository
             ) as T
             modelClass.isAssignableFrom(PostViewModel::class.java) -> return PostViewModel(
+                appRepository
+            ) as T
+
+            modelClass.isAssignableFrom(MapsViewModel::class.java) -> return MapsViewModel(
                 appRepository
             ) as T
         }

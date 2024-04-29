@@ -21,6 +21,7 @@ import com.fshou.ceritain.databinding.ActivityHomeBinding
 import com.fshou.ceritain.ui.adapter.StoryAdapter
 import com.fshou.ceritain.ui.capture.CaptureActivity
 import com.fshou.ceritain.ui.factory.ViewModelFactory
+import com.fshou.ceritain.ui.maps.MapsActivity
 import com.fshou.ceritain.ui.onboarding.OnBoardingActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
@@ -45,7 +46,7 @@ class HomeActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        WindowCompat.getInsetsController(window,binding.root).isAppearanceLightStatusBars = true
+        WindowCompat.getInsetsController(window, binding.root).isAppearanceLightStatusBars = true
 
 
 
@@ -59,13 +60,24 @@ class HomeActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
         binding.swipeRefresh.setOnRefreshListener(this)
 
         binding.fab.setOnClickListener {
-            startActivity(Intent(this, CaptureActivity::class.java), ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle())
+            startActivity(
+                Intent(this, CaptureActivity::class.java),
+                ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle()
+            )
         }
 
         binding.topAppBar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.action_logout -> {
                     showLogoutAlert()
+                    true
+                }
+
+                R.id.action_maps -> {
+                    startActivity(
+                        Intent(this@HomeActivity, MapsActivity::class.java),
+                        ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle()
+                    )
                     true
                 }
 
@@ -80,7 +92,7 @@ class HomeActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
         MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_App_MaterialAlertDialog)
             .setTitle(getString(R.string.are_you_sure))
             .setMessage(getString(R.string.confirm_to_log_out))
-            .setPositiveButton(getText(R.string.log_out)) { _,_ ->
+            .setPositiveButton(getText(R.string.log_out)) { _, _ ->
                 viewModel.clearLoginUser()
                 startActivity(
                     Intent(

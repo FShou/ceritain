@@ -3,8 +3,8 @@ package com.fshou.ceritain.data
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import com.fshou.ceritain.data.local.datastore.LoginUserPreference
-import com.fshou.ceritain.data.remote.response.LoginResult
 import com.fshou.ceritain.data.remote.response.BaseResponse
+import com.fshou.ceritain.data.remote.response.LoginResult
 import com.fshou.ceritain.data.remote.response.Story
 import com.fshou.ceritain.data.remote.retrofit.ApiService
 import com.google.gson.Gson
@@ -68,6 +68,28 @@ class AppRepository private constructor(
         try {
             val token = getLoginUser()
             val response = apiService.getStories("Bearer $token")
+            response.listStory?.let {
+                emit(Result.Success(it))
+            }
+        } catch (e: HttpException) {
+            val jsonBody = e.response()?.errorBody()?.string()
+            val errorBody = Gson().fromJson(jsonBody, BaseResponse::class.java)
+            errorBody.message?.let {
+                emit(Result.Error(it))
+            }
+        } catch (e: Exception) {
+            val msg = e.message
+            msg?.let {
+                emit(Result.Error(it))
+            }
+        }
+    }
+
+    fun getStoriesWithLocation(): LiveData<Result<List<Story>>> = liveData {
+        emit(Result.Loading)
+        try {
+            val token = getLoginUser()
+            val response = apiService.getStoriesWitLocation(token = "Bearer $token")
             response.listStory?.let {
                 emit(Result.Success(it))
             }
