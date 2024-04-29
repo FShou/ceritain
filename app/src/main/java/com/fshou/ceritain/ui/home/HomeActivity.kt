@@ -2,6 +2,7 @@ package com.fshou.ceritain.ui.home
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -24,7 +25,7 @@ import com.fshou.ceritain.ui.onboarding.OnBoardingActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 
-class HomeActivity : AppCompatActivity() {
+class HomeActivity : AppCompatActivity(){
 
     private lateinit var binding: ActivityHomeBinding
     private val viewModel: HomeViewModel by viewModels {
@@ -45,47 +46,54 @@ class HomeActivity : AppCompatActivity() {
         }
         WindowCompat.getInsetsController(window, binding.root).isAppearanceLightStatusBars = true
 
-
-        loadStories()
-
-        binding.swipeRefresh.setOnRefreshListener { loadStories() }
-
-        binding.fab.setOnClickListener {
-            startActivity(
-                Intent(this, CaptureActivity::class.java),
-                ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle()
-            )
-        }
-
-        binding.topAppBar.setOnMenuItemClickListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.action_logout -> {
-                    showLogoutAlert()
-                    true
-                }
-
-                R.id.action_maps -> {
-                    startActivity(
-                        Intent(this@HomeActivity, MapsActivity::class.java),
-                        ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle()
-                    )
-                    true
-                }
-
-                else -> false
+        with(binding) {
+            swipeRefresh.setOnRefreshListener { loadStories() }
+            topAppBar.setOnMenuItemClickListener { handleMenuItemClicked(it) }
+            fab.setOnClickListener {
+                startActivity(
+                    Intent(this@HomeActivity, CaptureActivity::class.java),
+                    ActivityOptionsCompat
+                        .makeSceneTransitionAnimation(this@HomeActivity)
+                        .toBundle()
+                )
             }
         }
 
+        loadStories()
 
     }
 
+    private fun handleMenuItemClicked(menuItem: MenuItem): Boolean {
+       return when (menuItem.itemId) {
+            R.id.action_logout -> {
+                showLogoutAlert()
+                true
+            }
+
+            R.id.action_maps -> {
+                startActivity(
+                    Intent(this@HomeActivity, MapsActivity::class.java),
+                    ActivityOptionsCompat
+                        .makeSceneTransitionAnimation(this@HomeActivity)
+                        .toBundle()
+                )
+                true
+            }
+
+            else -> false
+        }
+    }
+
+
     private fun loadStories() {
         val adapter = StoryAdapter()
+        val layout = LinearLayoutManager(this@HomeActivity)
+
         adapter.addLoadStateListener { handleLoad(it) }
-        val layout = LinearLayoutManager(this)
+
         binding.rvStories.adapter = adapter
         binding.rvStories.layoutManager = layout
-        viewModel.getStories().observe(this) {
+        viewModel.getStories().observe(this@HomeActivity) {
             adapter.submitData(lifecycle, it)
         }
     }
@@ -103,10 +111,17 @@ class HomeActivity : AppCompatActivity() {
                 binding.tvError.visibility = View.GONE
 
             }
-
             is LoadState.NotLoading -> {
                 binding.swipeRefresh.isRefreshing = false
                 binding.tvError.visibility = View.GONE
+                if (loadStates.append.endOfPaginationReached
+                    && loadStates.prepend.endOfPaginationReached
+                    && binding.rvStories.adapter!!.itemCount < 1
+                    ){
+
+                    binding.tvError.text = getString(R.string.no_story_found)
+                    binding.tvError.visibility = View.VISIBLE
+                }
             }
         }
     }
@@ -119,7 +134,7 @@ class HomeActivity : AppCompatActivity() {
                 viewModel.clearLoginUser()
                 startActivity(
                     Intent(
-                        this,
+                        this@HomeActivity,
                         OnBoardingActivity::class.java
                     ).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                 )
@@ -132,7 +147,6 @@ class HomeActivity : AppCompatActivity() {
 
 
     private fun showToast(msg: String) = Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
-
 
 
 

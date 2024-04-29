@@ -7,7 +7,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.liveData
 import com.fshou.ceritain.data.local.datastore.LoginUserPreference
-import com.fshou.ceritain.data.local.paging.StoryPagingSource
+import com.fshou.ceritain.data.paging.StoryPagingSource
 import com.fshou.ceritain.data.remote.response.BaseResponse
 import com.fshou.ceritain.data.remote.response.LoginResult
 import com.fshou.ceritain.data.remote.response.Story
@@ -69,7 +69,7 @@ class AppRepository private constructor(
     }
 
     fun getStories(): LiveData<PagingData<Story>> = liveData {
-        
+
         val token = getLoginUser()
         val pager = Pager(
             config = PagingConfig(pageSize = 5),

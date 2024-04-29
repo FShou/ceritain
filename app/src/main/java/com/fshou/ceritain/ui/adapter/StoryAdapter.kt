@@ -89,6 +89,7 @@ class StoryAdapter :
                 return oldItem.id == newItem.id
             }
         }
+
     }
 
 }

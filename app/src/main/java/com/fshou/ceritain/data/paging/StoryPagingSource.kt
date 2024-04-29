@@ -1,4 +1,4 @@
-package com.fshou.ceritain.data.local.paging
+package com.fshou.ceritain.data.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
@@ -15,6 +15,7 @@ class StoryPagingSource(private val apiService: ApiService, private val token: S
         return try {
             val position = params.key ?: INITIAL_PAGE_INDEX
             val responseData = apiService.getStories(token, position, params.loadSize)
+
             LoadResult.Page(
                 data = responseData.listStory as List<Story>,
                 prevKey = if (position == INITIAL_PAGE_INDEX) null else position - 1,
@@ -25,10 +26,12 @@ class StoryPagingSource(private val apiService: ApiService, private val token: S
         }
     }
 
+
     override fun getRefreshKey(state: PagingState<Int, Story>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
             val anchorPage = state.closestPageToPosition(anchorPosition)
             anchorPage?.prevKey?.plus(1) ?: anchorPage?.nextKey?.minus(1)
         }
     }
+
 }
