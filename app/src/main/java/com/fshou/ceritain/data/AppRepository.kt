@@ -69,12 +69,13 @@ class AppRepository private constructor(
     }
 
     fun getStories(): LiveData<PagingData<Story>> = liveData {
+        
         val token = getLoginUser()
-        emitSource(Pager(config = PagingConfig(
-            pageSize = 5
-        ), pagingSourceFactory = {
-            StoryPagingSource(apiService, "Bearer $token")
-        }).liveData)
+        val pager = Pager(
+            config = PagingConfig(pageSize = 5),
+            pagingSourceFactory = { StoryPagingSource(apiService, "Bearer $token") }
+        ).liveData
+        emitSource(pager)
     }
 
     fun getStoriesWithLocation(): LiveData<Result<List<Story>>> = liveData {

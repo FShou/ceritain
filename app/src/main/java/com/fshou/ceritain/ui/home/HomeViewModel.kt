@@ -9,9 +9,7 @@ import kotlinx.coroutines.launch
 class HomeViewModel(private val appRepository: AppRepository) : ViewModel() {
 
 
-//    fun getStories(): LiveData<Result<List<Story>>> = appRepository.getStories()
-
-    val stories = appRepository.getStories().cachedIn(viewModelScope)
+    fun getStories() = appRepository.getStories().cachedIn(viewModelScope)
 
 
     fun clearLoginUser() = viewModelScope.launch {

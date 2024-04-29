@@ -2,6 +2,7 @@ package com.fshou.ceritain.ui.home
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -10,8 +11,9 @@ import androidx.core.app.ActivityOptionsCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.paging.CombinedLoadStates
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.fshou.ceritain.R
 import com.fshou.ceritain.databinding.ActivityHomeBinding
 import com.fshou.ceritain.ui.adapter.StoryAdapter
@@ -22,7 +24,7 @@ import com.fshou.ceritain.ui.onboarding.OnBoardingActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 
-class HomeActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
+class HomeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityHomeBinding
     private val viewModel: HomeViewModel by viewModels {
@@ -44,9 +46,9 @@ class HomeActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
         WindowCompat.getInsetsController(window, binding.root).isAppearanceLightStatusBars = true
 
 
-        showStories()
+        loadStories()
 
-        binding.swipeRefresh.setOnRefreshListener(this)
+        binding.swipeRefresh.setOnRefreshListener { loadStories() }
 
         binding.fab.setOnClickListener {
             startActivity(
@@ -77,14 +79,35 @@ class HomeActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
 
     }
 
-    private fun showStories() {
-        // Todo: Loading & Error State
+    private fun loadStories() {
         val adapter = StoryAdapter()
+        adapter.addLoadStateListener { handleLoad(it) }
         val layout = LinearLayoutManager(this)
         binding.rvStories.adapter = adapter
         binding.rvStories.layoutManager = layout
-        viewModel.stories.observe(this) {
-            adapter.submitData(lifecycle,it)
+        viewModel.getStories().observe(this) {
+            adapter.submitData(lifecycle, it)
+        }
+    }
+
+    private fun handleLoad(loadStates: CombinedLoadStates) {
+        when (loadStates.refresh) {
+            is LoadState.Error -> {
+                binding.swipeRefresh.isRefreshing = false
+                binding.tvError.visibility = View.VISIBLE
+                (loadStates.refresh as LoadState.Error).error.message?.let { showToast(it) }
+            }
+
+            is LoadState.Loading -> {
+                binding.swipeRefresh.isRefreshing = true
+                binding.tvError.visibility = View.GONE
+
+            }
+
+            is LoadState.NotLoading -> {
+                binding.swipeRefresh.isRefreshing = false
+                binding.tvError.visibility = View.GONE
+            }
         }
     }
 
@@ -108,11 +131,9 @@ class HomeActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
     }
 
 
-
-
     private fun showToast(msg: String) = Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
 
-    override fun onRefresh() { }
+
 
 
 }
