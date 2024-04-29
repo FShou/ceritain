@@ -2,7 +2,12 @@ package com.fshou.ceritain.data
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.liveData
 import com.fshou.ceritain.data.local.datastore.LoginUserPreference
+import com.fshou.ceritain.data.local.paging.StoryPagingSource
 import com.fshou.ceritain.data.remote.response.BaseResponse
 import com.fshou.ceritain.data.remote.response.LoginResult
 import com.fshou.ceritain.data.remote.response.Story
@@ -34,7 +39,7 @@ class AppRepository private constructor(
                 errorBody.message?.let {
                     emit(Result.Error(it))
                 }
-            }catch (e: Exception) {
+            } catch (e: Exception) {
                 val msg = e.message
                 msg?.let {
                     emit(Result.Error(it))
@@ -55,7 +60,7 @@ class AppRepository private constructor(
             errorBody.message?.let {
                 emit(Result.Error(it))
             }
-        }catch (e: Exception) {
+        } catch (e: Exception) {
             val msg = e.message
             msg?.let {
                 emit(Result.Error(it))
@@ -63,26 +68,13 @@ class AppRepository private constructor(
         }
     }
 
-    fun getStories(): LiveData<Result<List<Story>>> = liveData {
-        emit(Result.Loading)
-        try {
-            val token = getLoginUser()
-            val response = apiService.getStories("Bearer $token")
-            response.listStory?.let {
-                emit(Result.Success(it))
-            }
-        } catch (e: HttpException) {
-            val jsonBody = e.response()?.errorBody()?.string()
-            val errorBody = Gson().fromJson(jsonBody, BaseResponse::class.java)
-            errorBody.message?.let {
-                emit(Result.Error(it))
-            }
-        } catch (e: Exception) {
-            val msg = e.message
-            msg?.let {
-                emit(Result.Error(it))
-            }
-        }
+    fun getStories(): LiveData<PagingData<Story>> = liveData {
+        val token = getLoginUser()
+        emitSource(Pager(config = PagingConfig(
+            pageSize = 5
+        ), pagingSourceFactory = {
+            StoryPagingSource(apiService, "Bearer $token")
+        }).liveData)
     }
 
     fun getStoriesWithLocation(): LiveData<Result<List<Story>>> = liveData {
@@ -116,13 +108,13 @@ class AppRepository private constructor(
             val token = getLoginUser()
             val response = apiService.postStory(imgFile, description, "Bearer $token")
             emit(Result.Success(response))
-        }catch (e: HttpException) {
+        } catch (e: HttpException) {
             val jsonBody = e.response()?.errorBody()?.string()
             val errorBody = Gson().fromJson(jsonBody, BaseResponse::class.java)
             errorBody.message?.let {
                 emit(Result.Error(it))
             }
-        }catch (e: Exception) {
+        } catch (e: Exception) {
             val msg = e.message
             msg?.let {
                 emit(Result.Error(it))

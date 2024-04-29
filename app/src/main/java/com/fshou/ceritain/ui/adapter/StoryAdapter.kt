@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.util.Pair
+import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import coil.transform.CircleCropTransformation
@@ -20,8 +22,8 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
-class StoryAdapter(val story: List<Story>) :
-    RecyclerView.Adapter<StoryAdapter.StoryViewHolder>() {
+class StoryAdapter :
+    PagingDataAdapter<Story,StoryAdapter.StoryViewHolder>(DIFF_CALLBACK) {
 
     inner class StoryViewHolder(private val binding: StoryItemLayoutBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -67,10 +69,26 @@ class StoryAdapter(val story: List<Story>) :
         return StoryViewHolder(binding)
     }
 
-    override fun getItemCount() = story.size
+
 
     override fun onBindViewHolder(holder: StoryViewHolder, position: Int) {
-        holder.bind(story[position])
+        val data = getItem(position)
+        if (data != null){
+            holder.bind(data)
+        }
+    }
+
+
+    companion object {
+        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Story>() {
+            override fun areItemsTheSame(oldItem: Story, newItem: Story): Boolean {
+                return oldItem == newItem
+            }
+
+            override fun areContentsTheSame(oldItem: Story, newItem: Story): Boolean {
+                return oldItem.id == newItem.id
+            }
+        }
     }
 
 }
