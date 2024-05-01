@@ -81,6 +81,7 @@
     <string name="username">Username</string>
     <string name="posted_at">Posted at</string>
     <string name="story_photo">Story Photo</string>
+    <string name="retry"><u>Retry</u></string>
 
 
 </resources>

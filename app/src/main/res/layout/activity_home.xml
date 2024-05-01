@@ -81,6 +81,7 @@
         android:backgroundTint="@color/emerald"
         android:text="@string/post_a_story"
         android:textColor="@color/white"
+        app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
         app:icon="@drawable/square_plus"
         app:iconTint="@color/white" />
 

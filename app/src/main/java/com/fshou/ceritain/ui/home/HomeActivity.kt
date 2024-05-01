@@ -17,6 +17,7 @@ import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.fshou.ceritain.R
 import com.fshou.ceritain.databinding.ActivityHomeBinding
+import com.fshou.ceritain.ui.adapter.LoadingAdapter
 import com.fshou.ceritain.ui.adapter.StoryAdapter
 import com.fshou.ceritain.ui.capture.CaptureActivity
 import com.fshou.ceritain.ui.factory.ViewModelFactory
@@ -91,7 +92,9 @@ class HomeActivity : AppCompatActivity(){
 
         adapter.addLoadStateListener { handleLoad(it) }
 
-        binding.rvStories.adapter = adapter
+        binding.rvStories.adapter = adapter.withLoadStateFooter(
+            footer = LoadingAdapter { adapter.retry() }
+        )
         binding.rvStories.layoutManager = layout
         viewModel.getStories().observe(this@HomeActivity) {
             adapter.submitData(lifecycle, it)
