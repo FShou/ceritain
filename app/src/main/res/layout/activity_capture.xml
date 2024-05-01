@@ -88,7 +88,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/capture" />
+            app:srcCompat="@drawable/capture"
+            android:contentDescription="@string/capture_button" />
 
         <ImageView
             android:id="@+id/gallery"
@@ -98,7 +99,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/gallery" />
+            app:srcCompat="@drawable/gallery"
+            android:contentDescription="@string/pick_from_gallery" />
 
         <ImageView
             android:id="@+id/switchCamera"
@@ -108,7 +110,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/switch_camera" />
+            app:srcCompat="@drawable/switch_camera"
+            android:contentDescription="@string/switch_camera" />
 
         <ImageView
             android:id="@+id/clearImage"
@@ -120,7 +123,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/close_black"
             android:visibility="gone"
-            />
+            android:contentDescription="@string/clear_image" />
 
         <ImageView
             android:id="@+id/chooseImg"
@@ -132,7 +135,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/check_check"
             android:visibility="gone"
-            />
+            android:contentDescription="@string/choose_image" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

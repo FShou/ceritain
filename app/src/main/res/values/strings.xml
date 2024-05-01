@@ -1,45 +1,86 @@
 <resources>
     <string name="app_name">Ceritain</string>
-    <string name="tell_your_story_to_the_world">Tell your Story\nto the world !!</string>
-    <string name="lorem">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,</string>
-    <string name="login">Login</string>
-    <string name="register">Register</string>
-    <string name="continue_without_an_account"><u>Continue Without an Account</u></string>
-    <string name="log_in_to_your_account">Log In To Your Account</string>
-    <string name="email">Email</string>
-    <string name="password">Password</string>
-    <string name="don_t_have_an_account">Don\'t have an account ?</string>
-    <string name="create_an_account">Create an Account</string>
-    <string name="repeat_password">Repeat Password</string>
-    <string name="already_have_an_account">Already have an account ?</string>
-    <string name="onboarding_image">OnBoarding Image</string>
-    <string name="profile_picture">Profile picture</string>
-    <string name="username">Username</string>
+    <string name="permission_request_denied">Permission request denied</string>
+    <string name="success_animation">Success Animation</string>
+    <string name="permission_denied">Permission Denied</string>
+
+
+<!--    Dialog-->
+    <string name="are_you_sure">Are you sure ?</string>
+    <string name="confirm_to_log_out">Confirm to Log Out</string>
+    <string name="this_will_not_be_saved">This will not be saved</string>
+    <string name="continu">Continue</string>
+    <string name="cancel">Cancel</string>
     <string name="log_out">Log Out</string>
-    <string name="capture">Capture</string>
-    <string name="preview_image">Preview Image</string>
-    <string name="post">Post</string>
+
+
+<!--   Home-->
     <string name="an_error_occured">An Error Occurred !!,\n Swipe down to refresh</string>
     <string name="no_story_found">No Story Found yet, Post a Story</string>
     <string name="post_a_story">Post a Story</string>
-    <string name="are_you_sure">Are you sure ?</string>
-    <string name="confirm_to_log_out">Confirm to Log Out</string>
-    <string name="cancel">Cancel</string>
+
+<!--    capture-->
+    <string name="capture">Capture</string>
+    <string name="capture_button">Capture Button</string>
+    <string name="pick_from_gallery">Pick from Gallery</string>
+    <string name="switch_camera">Switch Camera</string>
+    <string name="clear_image">Clear Image</string>
+    <string name="choose_image">Choose image</string>
+    <string name="no_media_selected">No Media selected</string>
     <string name="failed_to_show_camera">Failed to show camera</string>
     <string name="failed_to_capture">Failed to capture</string>
-    <string name="permission_request_denied">Permission request denied</string>
-    <string name="no_media_selected">No Media selected</string>
-    <string name="this_will_not_be_saved">This will not be saved</string>
-    <string name="continu">Continue</string>
+
+<!--    Post-->
+    <string name="post">Post</string>
+    <string name="preview_image">Preview Image</string>
+    <string name="post_hint">Write your story....</string>
+    <string name="add_location">Add Current Location</string>
+    <string name="location_not_found">Location is not found. Try Again</string>
+    <string name="posted_story">Story Posted\n Successfully</string>
+
+
+
+    <!--    OnBoarding-->
+    <string name="tell_your_story_to_the_world">Tell your Story\nto the world !!</string>
+    <string name="lorem">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,</string>
+    <string name="onboarding_image">OnBoarding Image</string>
+
+
+    <!--    Login-->
+    <string name="logged_in_nsuccesfully">Logged in\nSuccessfully</string>
+    <string name="log_in_to_your_account">Log In To Your Account</string>
+    <string name="login">Login</string>
+    <string name="don_t_have_an_account">Don\'t have an account ?</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="continue_without_an_account"><u>Continue Without an Account</u></string>
+
+<!--    CustomView-->
     <string name="invalid_email_address">Invalid Email Address</string>
     <string name="password_must_have_minimum_of_8_characters">Password must have minimum of 8 Characters</string>
     <string name="this_cannot_be_empty">This Cannot be empty</string>
-    <string name="title_activity_maps">MapsActivity</string>
+
+<!--    Maps-->
     <string name="maps">Maps</string>
-    <string name="post_hint">Write your story....</string>
-    <string name="posted_story">Story Posted\n Succesfully</string>
-    <string name="success_animation">Success Animation</string>
-    <string name="add_location">Add Current Location</string>
-    <string name="location_not_found">Location is not found. Try Again</string>
-    <string name="permission_denied">Permission Denied</string>
+    <string name="title_activity_maps">MapsActivity</string>
+
+
+    <!--    Register-->
+    <string name="register">Register</string>
+    <string name="name">Name</string>
+    <string name="your_name">Your Name</string>
+    <string name="your_email_addres">Your Email Address</string>
+    <string name="your_password">Your Password</string>
+    <string name="registered_succesfully">Registered Successfully</string>
+    <string name="already_have_an_account">Already have an account ?</string>
+    <string name="repeat_password">Repeat Password</string>
+    <string name="create_an_account">Create an Account</string>
+
+<!--    StoryItem-->
+    <string name="profile_picture">Profile picture</string>
+    <string name="username">Username</string>
+    <string name="posted_at">Posted at</string>
+    <string name="story_photo">Story Photo</string>
+
+
 </resources>

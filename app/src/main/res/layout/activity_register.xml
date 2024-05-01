@@ -61,7 +61,7 @@
         android:layout_marginHorizontal="24dp"
         android:layout_marginTop="48dp"
         android:fontFamily="@font/plus_jakarta_sans_medium"
-        android:text="Name"
+        android:text="@string/name"
         android:textColor="@color/emerald"
         android:textSize="14sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -73,7 +73,7 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         app:layout_constraintTop_toBottomOf="@id/tvName"
-        android:hint="Your Name"
+        android:hint="@string/your_name"
         android:layout_marginHorizontal="24dp"
         android:maxLines="1"
         android:inputType="text"
@@ -100,7 +100,7 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         app:layout_constraintTop_toBottomOf="@id/tvEmail"
-        android:hint="Your Email Addres"
+        android:hint="@string/your_email_addres"
         android:layout_marginHorizontal="24dp"
         android:autofillHints="emailAddress"
         android:inputType="textEmailAddress" />
@@ -125,7 +125,7 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         app:layout_constraintTop_toBottomOf="@id/tvPassword"
-        android:hint="Your Password"
+        android:hint="@string/your_password"
         android:layout_marginHorizontal="24dp"
         android:autofillHints="emailAddress"
         android:inputType="textPassword" />
@@ -217,10 +217,10 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.40"
-        app:srcCompat="@drawable/check_animated" />
+        app:srcCompat="@drawable/check_animated"
+        android:contentDescription="@string/success_animation" />
 
     <TextView
         android:id="@+id/registerSuccess"
@@ -229,7 +229,7 @@
         android:layout_marginTop="10dp"
         android:textSize="18sp"
         android:fontFamily="@font/plus_jakarta_sans_medium"
-        android:text="Registered Succesfully"
+        android:text="@string/registered_succesfully"
         android:textAlignment="center"
         android:textColor="@color/black"
         android:visibility="gone"

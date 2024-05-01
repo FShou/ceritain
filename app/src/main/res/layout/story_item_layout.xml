@@ -43,7 +43,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/plus_jakarta_sans"
-            android:text="Posted at"
+            android:text="@string/posted_at"
             android:textColor="#9F9F9F"
             android:textSize="12sp"
             card_view:layout_constraintBottom_toBottomOf="@+id/profilePicture"
@@ -59,7 +59,8 @@
             card_view:layout_constraintEnd_toEndOf="parent"
             card_view:layout_constraintStart_toStartOf="parent"
             card_view:layout_constraintTop_toBottomOf="@id/profilePicture"
-            tools:src="@tools:sample/avatars" />
+            tools:src="@tools:sample/avatars"
+            android:contentDescription="@string/story_photo" />
 
         <TextView
             android:id="@+id/description"

@@ -172,10 +172,10 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.40"
-        app:srcCompat="@drawable/check_animated" />
+        app:srcCompat="@drawable/check_animated"
+        android:contentDescription="@string/success_animation" />
 
     <TextView
         android:id="@+id/loginSucces"
@@ -184,7 +184,7 @@
         android:layout_marginTop="10dp"
         android:textSize="18sp"
         android:fontFamily="@font/plus_jakarta_sans_medium"
-        android:text="Logged in\nSuccesfully"
+        android:text="@string/logged_in_nsuccesfully"
         android:textAlignment="center"
         android:textColor="@color/black"
         android:visibility="gone"
