@@ -124,7 +124,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun addStoriesMarker(stories: List<Story>) {
         stories.forEach { story ->
-            println(story)
+            println(story) // Todo: Remove
             val latLng = LatLng(story.lat as Double, story.lon as Double)
             mMap.addMarker(
                 MarkerOptions()

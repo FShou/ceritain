@@ -1,9 +1,12 @@
 package com.fshou.ceritain.ui.post
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.drawable.Animatable2
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.graphics.drawable.Drawable
+import android.location.Location
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
@@ -12,8 +15,10 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -29,6 +34,8 @@ import com.fshou.ceritain.ui.capture.CaptureActivity
 import com.fshou.ceritain.ui.factory.ViewModelFactory
 import com.fshou.ceritain.ui.home.HomeActivity
 import com.fshou.ceritain.uriToFile
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -44,6 +51,10 @@ class PostActivity : AppCompatActivity() {
     private val viewModel: PostViewModel by viewModels {
         ViewModelFactory.getInstance(this)
     }
+    private lateinit var fusedLocation: FusedLocationProviderClient
+    private var longitude: Double = 0.0
+    private var latitude: Double = 0.0
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,11 +67,20 @@ class PostActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        WindowCompat.getInsetsController(window,binding.root).isAppearanceLightStatusBars = true
+        WindowCompat.getInsetsController(window, binding.root).isAppearanceLightStatusBars = true
 
         val imgUri = Uri.parse(intent.getStringExtra(CaptureActivity.EXTRA_IMG_URI))
-        with(binding){
+        fusedLocation = LocationServices.getFusedLocationProviderClient(this)
+        with(binding) {
             topAppBar.setNavigationOnClickListener { showExitAlert() }
+            addLocation.setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked) {
+                    getMyLastLocation()
+                } else {
+                    longitude = 0.0
+                    latitude = 0.0
+                }
+            }
             buttonAdd.setOnClickListener {
                 postStory(imgUri)
             }
@@ -87,6 +107,56 @@ class PostActivity : AppCompatActivity() {
 
     }
 
+    private val requestPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { permissions ->
+            when {
+                permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false -> {
+                    getMyLastLocation()
+                }
+
+                permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false -> {
+                    getMyLastLocation()
+                }
+
+                else -> {
+                    showToast(getString(R.string.permission_denied))
+                    binding.addLocation.isChecked = false
+
+                }
+            }
+        }
+
+    private fun checkPermission(permission: String): Boolean {
+        return ContextCompat.checkSelfPermission(
+            this@PostActivity,
+            permission
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun getMyLastLocation() {
+        if (checkPermission(Manifest.permission.ACCESS_FINE_LOCATION) &&
+            checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+        ) {
+            fusedLocation.lastLocation.addOnSuccessListener { location: Location? ->
+                if (location != null) {
+                    longitude = location.longitude
+                    latitude = location.latitude
+                } else {
+                    showToast(getString(R.string.location_not_found))
+                }
+            }
+        } else {
+            requestPermissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
+        }
+    }
+
     private fun setPostButtonEnabled() {
         with(binding) {
             buttonAdd.isEnabled = !edAddDescription.text.isNullOrEmpty()
@@ -96,7 +166,8 @@ class PostActivity : AppCompatActivity() {
 
     private fun showExitAlert() {
         MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_App_MaterialAlertDialog)
-            .setTitle(getString(R.string.are_you_sure)).setMessage(getString(R.string.this_will_not_be_saved))
+            .setTitle(getString(R.string.are_you_sure))
+            .setMessage(getString(R.string.this_will_not_be_saved))
             .setPositiveButton(getString(R.string.continu)) { _, _ -> startIntentHome() }
             .setNegativeButton(getString(R.string.cancel)) { dialog, _ -> dialog.dismiss() }
             .show()
@@ -116,6 +187,8 @@ class PostActivity : AppCompatActivity() {
         CoroutineScope(Dispatchers.IO).launch {
             val imgFile = uriToFile(uri, this@PostActivity).reduceFileImage()
             val description = binding.edAddDescription.text.toString()
+            val lon = longitude.toString().toRequestBody()
+            val lat = latitude.toString().toRequestBody()
 
             val requestBody = description.toRequestBody("text/plain".toMediaType())
             val requestImageFile = imgFile.asRequestBody("image/jpeg".toMediaType())
@@ -124,9 +197,10 @@ class PostActivity : AppCompatActivity() {
             )
 
             lifecycleScope.launch {
-                viewModel.postStory(multipartBody, requestBody).observe(this@PostActivity) {
-                    handleResult(it)
-                }
+                viewModel.postStory(multipartBody, requestBody, lon, lat)
+                    .observe(this@PostActivity) {
+                        handleResult(it)
+                    }
             }
         }
 
@@ -149,11 +223,15 @@ class PostActivity : AppCompatActivity() {
             is Result.Error -> {
                 binding.progressBar.visibility = View.GONE
                 enablePostForm(true)
-                Toast.makeText(this@PostActivity, result.error, Toast.LENGTH_LONG).show()
+                showToast(result.error)
             }
 
         }
     }
+
+    private fun showToast(msg: String) =
+        Toast.makeText(this@PostActivity, msg, Toast.LENGTH_LONG).show()
+
 
     private fun showSuccessAnim() {
         with(binding) {
@@ -175,6 +253,7 @@ class PostActivity : AppCompatActivity() {
             postImage.visibility = View.GONE
             edAddDescription.visibility = View.GONE
             buttonAdd.visibility = View.GONE
+            addLocation.visibility = View.GONE
         }
     }
 
@@ -182,6 +261,7 @@ class PostActivity : AppCompatActivity() {
         with(binding) {
             buttonAdd.isEnabled = isEnable
             edAddDescription.isEnabled = isEnable
+            addLocation.isEnabled = isEnable
         }
     }
 

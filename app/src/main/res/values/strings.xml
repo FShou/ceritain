@@ -36,4 +36,10 @@
     <string name="this_cannot_be_empty">This Cannot be empty</string>
     <string name="title_activity_maps">MapsActivity</string>
     <string name="maps">Maps</string>
+    <string name="post_hint">Write your story....</string>
+    <string name="posted_story">Story Posted\n Succesfully</string>
+    <string name="success_animation">Success Animation</string>
+    <string name="add_location">Add Current Location</string>
+    <string name="location_not_found">Location is not found. Try Again</string>
+    <string name="permission_denied">Permission Denied</string>
 </resources>

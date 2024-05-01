@@ -31,12 +31,13 @@ interface ApiService {
         @Field("password") password: String
     ): LoginResponse
 
-
     @Multipart
     @POST("stories")
     suspend fun postStory(
         @Part file: MultipartBody.Part,
         @Part("description") description: RequestBody,
+        @Part("lon") lon: RequestBody,
+        @Part("lat") lat: RequestBody,
         @Header("Authorization") token: String
     ):  BaseResponse
 

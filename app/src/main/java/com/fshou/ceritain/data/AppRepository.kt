@@ -103,11 +103,13 @@ class AppRepository private constructor(
     fun postStory(
         imgFile: MultipartBody.Part,
         description: RequestBody,
+        lon: RequestBody,
+        lat: RequestBody,
     ): LiveData<Result<BaseResponse>> = liveData {
         emit(Result.Loading)
         try {
             val token = getLoginUser()
-            val response = apiService.postStory(imgFile, description, "Bearer $token")
+            val response = apiService.postStory(imgFile, description, lon,lat,"Bearer $token")
             emit(Result.Success(response))
         } catch (e: HttpException) {
             val jsonBody = e.response()?.errorBody()?.string()

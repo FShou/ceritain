@@ -11,9 +11,11 @@ import okhttp3.RequestBody
 class PostViewModel(private val appRepository: AppRepository) : ViewModel() {
     fun postStory(
         imgFile: MultipartBody.Part,
-        description: RequestBody
+        description: RequestBody,
+        lon: RequestBody,
+        lat: RequestBody,
     ): LiveData<Result<BaseResponse>> =
-        appRepository.postStory(imgFile, description)
+        appRepository.postStory(imgFile, description,lon,lat)
 
 
 }

@@ -31,22 +31,34 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/topAppBar"
-        tools:srcCompat="@tools:sample/backgrounds/scenic" />
+        tools:srcCompat="@tools:sample/backgrounds/scenic"
+        android:contentDescription="@string/preview_image" />
 
     <com.fshou.ceritain.ui.EditText
         android:id="@+id/ed_add_description"
         android:layout_width="0dp"
-        android:layout_height="250dp"
-        app:layout_constraintTop_toBottomOf="@id/postImage"
-        app:layout_constraintBottom_toTopOf="@id/button_add"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_height="200dp"
         android:layout_marginHorizontal="24dp"
-        android:inputType="text|textMultiLine"
-        android:hint="Write your story.... "
         android:gravity="top"
-        />
+        android:hint="@string/post_hint"
+        android:inputType="text|textMultiLine"
+        app:layout_constraintBottom_toTopOf="@+id/addLocation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/postImage" />
 
+
+    <com.google.android.material.materialswitch.MaterialSwitch
+        android:id="@+id/addLocation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:paddingStart="2dp"
+        android:fontFamily="@font/plus_jakarta_sans_semi_bold"
+        android:text="@string/add_location"
+        app:layout_constraintBottom_toTopOf="@+id/button_add"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="RtlSymmetry" />
 
     <com.fshou.ceritain.ui.PrimaryButton
         android:id="@+id/button_add"
@@ -55,6 +67,7 @@
         android:layout_marginHorizontal="24dp"
         android:layout_marginBottom="32dp"
         android:text="@string/post"
+        android:enabled="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -83,7 +96,8 @@
 
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.40"
-        app:srcCompat="@drawable/check_animated" />
+        app:srcCompat="@drawable/check_animated"
+        android:contentDescription="@string/success_animation" />
 
     <TextView
         android:id="@+id/postSuccess"
@@ -92,7 +106,7 @@
         android:layout_marginTop="10dp"
         android:textSize="18sp"
         android:fontFamily="@font/plus_jakarta_sans_medium"
-        android:text="Story Posted\n Succesfully"
+        android:text="@string/posted_story"
         android:textAlignment="center"
         android:textColor="@color/black"
         android:visibility="gone"
